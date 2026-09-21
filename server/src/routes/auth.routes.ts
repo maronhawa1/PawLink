@@ -1,8 +1,15 @@
+import "dotenv/config";
 import { Router } from "express";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { db } from "../prisma/db.js";
 
 const router = Router();
+const jwtSecret = process.env.JWT_SECRET;
+
+if (!jwtSecret || jwtSecret.length < 32) {
+  throw new Error("JWT_SECRET must be set in server/.env");
+}
 
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body ?? {};
@@ -97,8 +104,18 @@ router.post("/login", async (req, res) => {
     }
 
     // Login successful
+    const token = jwt.sign(
+      { sub: String(user.id) },
+      jwtSecret,
+      {
+        algorithm: "HS256",
+        expiresIn: "1h",
+      }
+    );
+
     res.status(200).json({
       message: "Login successful",
+      token,
       user: {
         id: user.id,
         name: user.name,
