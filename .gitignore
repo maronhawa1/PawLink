@@ -3,3 +3,8 @@ dist/
 .env
 .DS_Store
 *.log
+.agents/
+.claude/
+.cursor/
+.devin/
+prisma-8.md
