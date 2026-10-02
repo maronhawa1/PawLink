@@ -37,7 +37,7 @@ export default function LoginPage() {
 
       localStorage.setItem("pawlink_token", data.token);
 
-      // זמני — בהמשך נעביר לדף My Pets דרך React Router
+    
       window.location.assign("/");
     } catch (error) {
       setError(
