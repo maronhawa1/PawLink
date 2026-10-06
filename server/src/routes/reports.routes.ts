@@ -30,12 +30,75 @@ function isAnimalType(value: unknown): value is AnimalType {
   );
 }
 
+function isValidLatitude(value: unknown): value is number {
+  return (
+    typeof value === "number" &&
+    Number.isFinite(value) &&
+    value >= -90 &&
+    value <= 90
+  );
+}
+
+function isValidLongitude(value: unknown): value is number {
+  return (
+    typeof value === "number" &&
+    Number.isFinite(value) &&
+    value >= -180 &&
+    value <= 180
+  );
+}
+
+router.get("/", async (_req, res) => {
+  try {
+    const reports = await db.orm.public.Report.all();
+
+    const reportsWithLocation = reports.filter(
+      (report) =>
+        report.latitude !== null &&
+        report.latitude !== undefined &&
+        report.longitude !== null &&
+        report.longitude !== undefined
+    );
+
+    res.status(200).json({
+      reports: reportsWithLocation,
+    });
+  } catch (error) {
+    console.error("Get public reports error:", error);
+
+    res.status(500).json({
+      message: "Failed to get reports",
+    });
+  }
+});
+
+router.get("/mine", requireAuth, async (_req, res) => {
+  try {
+    const reports = await db.orm.public.Report
+      .where({
+        reporterId: res.locals.userId,
+      })
+      .all();
+
+    res.status(200).json({
+      reports,
+    });
+  } catch (error) {
+    console.error("Get user reports error:", error);
+
+    res.status(500).json({
+      message: "Failed to get user reports",
+    });
+  }
+});
+
 router.post("/", requireAuth, async (req, res) => {
   const {
     title,
     description,
     type,
     animalType,
+    photoUrl,
     locationText,
     latitude,
     longitude,
@@ -43,35 +106,70 @@ router.post("/", requireAuth, async (req, res) => {
 
   if (
     typeof title !== "string" ||
-    !title.trim() ||
+    title.trim().length === 0 ||
     typeof description !== "string" ||
-    !description.trim() ||
+    description.trim().length === 0 ||
     !isReportType(type)
   ) {
     res.status(400).json({
-      message: "Title, description and a valid report type are required",
+      message:
+        "Title, description and a valid report type are required",
     });
     return;
   }
 
-  if (animalType !== undefined && !isAnimalType(animalType)) {
-    res.status(400).json({ message: "Invalid animal type" });
+  if (
+    animalType !== undefined &&
+    animalType !== null &&
+    !isAnimalType(animalType)
+  ) {
+    res.status(400).json({
+      message: "Invalid animal type",
+    });
+    return;
+  }
+
+  if (
+    photoUrl !== undefined &&
+    photoUrl !== null &&
+    typeof photoUrl !== "string"
+  ) {
+    res.status(400).json({
+      message: "Invalid photo URL",
+    });
+    return;
+  }
+
+  if (
+    locationText !== undefined &&
+    locationText !== null &&
+    typeof locationText !== "string"
+  ) {
+    res.status(400).json({
+      message: "Invalid location",
+    });
     return;
   }
 
   if (
     latitude !== undefined &&
-    (typeof latitude !== "number" || latitude < -90 || latitude > 90)
+    latitude !== null &&
+    !isValidLatitude(latitude)
   ) {
-    res.status(400).json({ message: "Invalid latitude" });
+    res.status(400).json({
+      message: "Invalid latitude",
+    });
     return;
   }
 
   if (
     longitude !== undefined &&
-    (typeof longitude !== "number" || longitude < -180 || longitude > 180)
+    longitude !== null &&
+    !isValidLongitude(longitude)
   ) {
-    res.status(400).json({ message: "Invalid longitude" });
+    res.status(400).json({
+      message: "Invalid longitude",
+    });
     return;
   }
 
@@ -80,33 +178,30 @@ router.post("/", requireAuth, async (req, res) => {
       title: title.trim(),
       description: description.trim(),
       type,
-      animalType,
+      animalType: animalType ?? undefined,
+      photoUrl:
+        typeof photoUrl === "string"
+          ? photoUrl.trim() || undefined
+          : undefined,
       locationText:
         typeof locationText === "string"
           ? locationText.trim() || undefined
           : undefined,
-      latitude,
-      longitude,
+      latitude: latitude ?? undefined,
+      longitude: longitude ?? undefined,
       reporterId: res.locals.userId,
     });
 
-    res.status(201).json({ report });
+    res.status(201).json({
+      message: "Report created successfully",
+      report,
+    });
   } catch (error) {
     console.error("Create report error:", error);
-    res.status(500).json({ message: "Failed to create report" });
-  }
-});
 
-router.get("/mine", requireAuth, async (_req, res) => {
-  try {
-    const reports = await db.orm.public.Report
-      .where({ reporterId: res.locals.userId })
-      .all();
-
-    res.status(200).json({ reports });
-  } catch (error) {
-    console.error("Get reports error:", error);
-    res.status(500).json({ message: "Failed to get reports" });
+    res.status(500).json({
+      message: "Failed to create report",
+    });
   }
 });
 
