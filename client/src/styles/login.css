@@ -1,44 +1,18 @@
-:root {
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-  color: #0b2854;
-  background: #f7faf9;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-button,
-input {
-  font: inherit;
-}
-
 .login-page {
-  min-height: 100vh;
+  flex: 1;
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   background: #f8faf9;
 }
 
+/* Visual panel */
+
 .login-visual {
   position: relative;
-  min-height: 100vh;
   padding: 48px 64px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   overflow: hidden;
-
   background:
     linear-gradient(
       90deg,
@@ -58,21 +32,6 @@ input {
   height: 420px;
   border-radius: 50%;
   background: rgba(70, 153, 132, 0.12);
-}
-
-.login-brand {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: fit-content;
-  font-size: 28px;
-  font-weight: 800;
-}
-
-.login-paw {
-  font-size: 34px;
 }
 
 .login-visual-copy {
@@ -98,8 +57,9 @@ input {
   line-height: 1.6;
 }
 
+/* Form */
+
 .login-content {
-  min-height: 100vh;
   padding: 48px;
   display: grid;
   place-items: center;
@@ -200,13 +160,7 @@ input {
   }
 
   .login-visual {
-    position: relative;
     min-height: 100vh;
-    padding: 48px 64px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-
     background-color: #edf7f3;
     background-image:
       linear-gradient(
@@ -226,25 +180,20 @@ input {
   }
 
   .login-visual-copy {
-    position: relative;
-    z-index: 1;
     max-width: 430px;
     margin-top: 80px;
   }
 
   .login-visual-copy h1 {
-    margin: 0 0 20px;
     font-size: clamp(46px, 5vw, 68px);
-    line-height: 1;
-    letter-spacing: -3px;
   }
+
   .login-visual-copy p {
     max-width: 360px;
     font-size: 17px;
   }
 
   .login-content {
-    min-height: auto;
     padding: 32px 20px;
   }
 

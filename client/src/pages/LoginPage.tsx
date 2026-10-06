@@ -37,7 +37,7 @@ export default function LoginPage() {
 
       localStorage.setItem("pawlink_token", data.token);
 
-  
+    
       window.location.assign("/");
     } catch (error) {
       setError(
