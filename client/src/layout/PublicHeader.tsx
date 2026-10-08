@@ -1,24 +1,57 @@
+import {
+  Link,
+  NavLink,
+} from "react-router-dom";
 import "../styles/layout.css";
 
 export default function PublicHeader() {
   return (
     <header className="public-header">
-      <a className="public-logo" href="/">
+      <Link
+        className="public-logo"
+        to="/"
+        aria-label="PawLink home"
+      >
         <span aria-hidden="true">🐾</span>
         <span>PawLink</span>
-      </a>
+      </Link>
 
-      <nav className="public-navigation" aria-label="Main navigation">
-        <a href="/">Home</a>
-        <a href="/#about">About</a>
-        <a href="/#features">Features</a>
+      <nav
+        className="public-navigation"
+        aria-label="Main navigation"
+      >
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            isActive ? "active" : undefined
+          }
+        >
+          Home
+        </NavLink>
+
+        <Link to="/#about">About</Link>
+
+        <Link to="/#features">Features</Link>
+
+        <NavLink
+          to="/reports/map"
+          className={({ isActive }) =>
+            isActive ? "active" : undefined
+          }
+        >
+          Reports map
+        </NavLink>
       </nav>
 
       <div className="public-actions">
-        <span>New to PawLink?</span>
-        <a className="signup-link" href="/register">
+        <Link className="login-link" to="/login">
+          Log in
+        </Link>
+
+        <Link className="signup-link" to="/register">
           Sign up
-        </a>
+        </Link>
       </div>
     </header>
   );

@@ -27,7 +27,10 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <section className="landing-features">
+<section
+  id="features"
+  className="landing-features"
+>
       <div className="landing-section-heading">
         <span>How PawLink helps</span>
         <h2>Everything needed to protect animals</h2>

@@ -1,0 +1,66 @@
+.coming-soon-page {
+  display: grid;
+  min-height: 65vh;
+  padding: 48px 24px;
+  place-items: center;
+  background: #f6faf9;
+}
+
+.coming-soon-card {
+  width: min(620px, 100%);
+  padding: 52px;
+  border: 1px solid #d7e6e1;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #0e2a5a;
+  text-align: center;
+  box-shadow: 0 16px 38px rgba(14, 42, 90, 0.08);
+}
+
+.coming-soon-card > span {
+  color: #238f73;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.coming-soon-card h1 {
+  margin: 16px 0 12px;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  line-height: 1.1;
+}
+
+.coming-soon-card p {
+  margin: 0 auto 28px;
+  color: #5c708d;
+  line-height: 1.65;
+}
+
+.coming-soon-card a {
+  display: inline-flex;
+  min-height: 48px;
+  padding: 0 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: #238f73;
+  color: #ffffff;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.coming-soon-card a:hover {
+  background: #19765f;
+}
+
+.coming-soon-card a:focus-visible {
+  outline: 3px solid rgba(61, 155, 131, 0.35);
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .coming-soon-card {
+    padding: 38px 22px;
+  }
+}

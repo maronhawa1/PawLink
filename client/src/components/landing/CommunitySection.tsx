@@ -18,7 +18,10 @@ const benefits = [
 
 export default function CommunitySection() {
   return (
-    <section className="landing-community">
+   <section
+  id="about"
+  className="landing-community"
+>
       <div className="landing-community-intro">
         <span>Stronger together</span>
 
