@@ -1,11 +1,13 @@
+import PublicFooter from "./layout/PublicFooter";
 import PublicHeader from "./layout/PublicHeader";
-import LoginPage from "./pages/LoginPage";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   return (
     <>
       <PublicHeader />
-      <LoginPage />
+      <LandingPage />
+      <PublicFooter />
     </>
   );
 }
