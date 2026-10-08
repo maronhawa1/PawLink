@@ -107,3 +107,31 @@
     justify-items: center;
   }
 }
+
+.public-navigation a.active {
+  color: #19765f;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 7px;
+}
+
+.login-link {
+  display: inline-flex;
+  min-height: 44px;
+  padding: 0 14px;
+  align-items: center;
+  justify-content: center;
+  color: #0e2a5a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  color: #19765f;
+}
+
+.login-link:focus-visible {
+  outline: 3px solid rgba(61, 155, 131, 0.3);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
