@@ -2,14 +2,28 @@ import "dotenv/config";
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { rateLimit } from "express-rate-limit";
 import { db } from "../prisma/db.js";
 
 const router = Router();
 const jwtSecret = process.env.JWT_SECRET;
 
 if (!jwtSecret || jwtSecret.length < 32) {
-  throw new Error("JWT_SECRET must be set in server/.env");
+  throw new Error(
+    "JWT_SECRET must contain at least 32 characters in server/.env",
+  );
 }
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  message: {
+    message: "Too many login attempts. Please try again later.",
+  },
+});
 
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body ?? {};
@@ -22,22 +36,28 @@ router.post("/register", async (req, res) => {
     typeof password !== "string" ||
     password.length < 8
   ) {
-    res.status(400).json({ message: "Invalid registration details" });
+    res.status(400).json({
+      message: "Invalid registration details",
+    });
     return;
   }
 
+  const normalizedEmail = email.trim().toLowerCase();
+
   try {
-    const normalizedEmail = email.trim().toLowerCase();
     const existingUser = await db.orm.public.User.where({
       email: normalizedEmail,
     }).first();
 
     if (existingUser) {
-      res.status(409).json({ message: "Email already registered" });
+      res.status(409).json({
+        message: "Email already registered",
+      });
       return;
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
+
     const newUser = await db.orm.public.User.create({
       name: name.trim(),
       email: normalizedEmail,
@@ -53,16 +73,32 @@ router.post("/register", async (req, res) => {
       },
     });
   } catch (error) {
+    try {
+      const existingUser = await db.orm.public.User.where({
+        email: normalizedEmail,
+      }).first();
+
+      if (existingUser) {
+        res.status(409).json({
+          message: "Email already registered",
+        });
+        return;
+      }
+    } catch (lookupError) {
+      console.error("Registration lookup error:", lookupError);
+    }
+
     console.error("Register user error:", error);
-    res.status(500).json({ message: "Failed to register user" });
+
+    res.status(500).json({
+      message: "Failed to register user",
+    });
   }
 });
 
-
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   const { email, password } = req.body ?? {};
 
-  // Validate input
   if (
     typeof email !== "string" ||
     !email.trim() ||
@@ -78,7 +114,6 @@ router.post("/login", async (req, res) => {
   try {
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Find user
     const user = await db.orm.public.User.where({
       email: normalizedEmail,
     }).first();
@@ -90,10 +125,9 @@ router.post("/login", async (req, res) => {
       return;
     }
 
-    // Compare password with stored hash
     const passwordIsValid = await bcrypt.compare(
       password,
-      user.passwordHash
+      user.passwordHash,
     );
 
     if (!passwordIsValid) {
@@ -103,14 +137,13 @@ router.post("/login", async (req, res) => {
       return;
     }
 
-    // Login successful
     const token = jwt.sign(
       { sub: String(user.id) },
       jwtSecret,
       {
         algorithm: "HS256",
         expiresIn: "1h",
-      }
+      },
     );
 
     res.status(200).json({
@@ -124,13 +157,10 @@ router.post("/login", async (req, res) => {
     });
   } catch (error) {
     console.error("Login user error:", error);
-
     res.status(500).json({
       message: "Failed to login",
     });
   }
 });
 
-
 export default router;
-

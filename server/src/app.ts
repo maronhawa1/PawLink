@@ -1,12 +1,33 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import petsRoutes from "./routes/pets.routes.js";
 import reportsRoutes from "./routes/reports.routes.js";
+
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+const allowedOrigins = (
+  process.env.CLIENT_ORIGINS ?? "http://localhost:5173"
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      callback(
+        null,
+        origin === undefined || allowedOrigins.includes(origin),
+      );
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
+
+app.use(express.json({ limit: "100kb" }));
 
 app.get("/api/health", (_req, res) => {
   res.status(200).json({
@@ -18,4 +39,5 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/pets", petsRoutes);
 app.use("/api/reports", reportsRoutes);
+
 export default app;
