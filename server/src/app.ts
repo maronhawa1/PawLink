@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import reportUpdatesRoutes from "./routes/report-updates.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import petsRoutes from "./routes/pets.routes.js";
 import reportsRoutes from "./routes/reports.routes.js";
@@ -37,6 +38,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/reports", reportUpdatesRoutes);
 app.use("/api/pets", petsRoutes);
 app.use("/api/reports", reportsRoutes);
 
