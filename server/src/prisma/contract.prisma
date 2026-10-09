@@ -1,0 +1,147 @@
+// use prisma-8
+
+enum PetSpecies {
+  DOG
+  CAT
+  OTHER
+}
+
+enum PetSex {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
+enum ReportType {
+  INJURED
+  LOST
+  FOUND
+  NEEDS_RESCUE
+}
+
+enum ReportStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  passwordHash String
+  username     String?        @unique
+  name         String?
+
+  pets           Pet[]
+  reportsCreated Report[]       @relation("ReportCreator")
+  reportsHandled Report[]       @relation("ReportHandler")
+  reportUpdates ReportUpdate[]
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
+
+model Pet {
+  id              Int        @id @default(autoincrement())
+  name            String
+  species         PetSpecies
+  breed           String?
+  birthDate       TimestamptzString?
+  sex             PetSex     @default(UNKNOWN)
+  color           String?
+  microchipNumber String?     @unique
+  photoUrl        String?
+  medicalNotes    String?
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  vaccinations Vaccination[]
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@index([ownerId])
+}
+
+model Vaccination {
+  id           Int      @id @default(autoincrement())
+  name         String
+  vaccinatedAt TimestamptzString
+  nextDueAt    TimestamptzString?
+  clinicName   String?
+  notes        String?
+  documentUrl  String?
+
+  petId Int
+  pet   Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@index([petId])
+}
+
+model Report {
+  id           Int          @id @default(autoincrement())
+  title        String
+  description  String
+  type         ReportType
+  status       ReportStatus @default(OPEN)
+  animalType   PetSpecies?
+  photoUrl     String?
+  locationText String?
+  latitude     Float?
+  longitude    Float?
+
+  reporterId Int
+  reporter   User @relation(
+    "ReportCreator",
+    fields: [reporterId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  assignedToId Int?
+  assignedTo   User? @relation(
+    "ReportHandler",
+    fields: [assignedToId],
+    references: [id],
+    onDelete: SetNull
+  )
+
+  updates ReportUpdate[]
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@index([reporterId])
+  @@index([assignedToId])
+  @@index([status])
+}
+
+model ReportUpdate {
+  id      Int          @id @default(autoincrement())
+  status  ReportStatus
+  message String?
+
+  reportId Int
+  report   Report @relation(
+    fields: [reportId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  authorId Int
+  author   User @relation(
+    fields: [authorId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  createdAt TimestamptzString @default(now())
+
+  @@index([reportId])
+  @@index([authorId])
+}
