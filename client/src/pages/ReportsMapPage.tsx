@@ -8,7 +8,7 @@ import {
 } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
 import {
-  getReports,
+  getMapReports,
   type AnimalReport,
   type ReportType,
 } from "../services/reports.service";
@@ -93,27 +93,42 @@ export default function ReportsMapPage() {
   const [error, setError] = useState("");
   const [locationError, setLocationError] = useState("");
 
+  // Reload from the server whenever the type filter changes, so the
+  // filter applies to all reports, not only the ones already loaded.
   useEffect(() => {
+    let cancelled = false;
+
     async function loadReports() {
       try {
+        const data = await getMapReports(
+          selectedType === "ALL"
+            ? {}
+            : { types: [selectedType] }
+        );
+
+        if (cancelled) return;
+
         setError("");
-
-        const data = await getReports();
-
-        setReports(data);
+        setReports(data.reports);
       } catch (loadError) {
+        if (cancelled) return;
+
         setError(
           loadError instanceof Error
             ? loadError.message
             : "Unable to load reports"
         );
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
 
     void loadReports();
-  }, []);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedType]);
 
   const visibleReports = useMemo(() => {
     return reports.filter((report) => {
