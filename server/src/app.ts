@@ -4,6 +4,7 @@ import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import petsRoutes from "./routes/pets.routes.js";
 import reportsRoutes from "./routes/reports.routes.js";
+import reportStatusRoutes from "./routes/report-status.routes.js";
 
 const app = express();
 
@@ -39,5 +40,7 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/pets", petsRoutes);
 app.use("/api/reports", reportsRoutes);
+// Registered after reportsRoutes so "/api/reports/mine" keeps working.
+app.use("/api/reports", reportStatusRoutes);
 
 export default app;
