@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import petsRoutes from "./routes/pets.routes.js";
+import reportsMapRoutes from "./routes/reports-map.routes.js";
 import reportsRoutes from "./routes/reports.routes.js";
 
 const app = express();
@@ -38,6 +39,8 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/pets", petsRoutes);
+// Mounted first so "/api/reports/map" is not treated as a report id.
+app.use("/api/reports", reportsMapRoutes);
 app.use("/api/reports", reportsRoutes);
 
 export default app;
