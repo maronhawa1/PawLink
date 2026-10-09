@@ -416,3 +416,12 @@
   cursor: wait;
   opacity: 0.65;
 }
+
+
+.map-popup-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #238f73;
+  font-weight: 700;
+  text-decoration: none;
+}

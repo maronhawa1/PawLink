@@ -3,6 +3,7 @@ import PublicLayout from "./layout/PublicLayout";
 import ComingSoonPage from "./pages/ComingSoonPage";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
+import ReportDetailsPage from "./pages/ReportDetailsPage";
 import ReportsMapPage from "./pages/ReportsMapPage";
 
 function App() {
@@ -39,6 +40,11 @@ function App() {
               description="The animal report form is currently being prepared."
             />
           }
+        />
+
+        <Route
+          path="/reports/:id"
+          element={<ReportDetailsPage />}
         />
 
         <Route

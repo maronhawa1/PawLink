@@ -7,6 +7,7 @@ import {
   useMap,
 } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
+import { Link } from "react-router-dom";
 import {
   getReports,
   type AnimalReport,
@@ -364,6 +365,13 @@ export default function ReportsMapPage() {
                           " "
                         )}
                       </span>
+
+                      <Link
+                        className="map-popup-link"
+                        to={`/reports/${report.id}`}
+                      >
+                        View details and history →
+                      </Link>
                     </article>
                   </Popup>
                 </CircleMarker>
