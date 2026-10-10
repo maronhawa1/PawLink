@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import uploadsRoutes from "./routes/uploads.routes.js";
 import cors from "cors";
 import authRoutes from "./routes/auth.routes.js";
 import petsRoutes from "./routes/pets.routes.js";
@@ -36,6 +37,7 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
+app.use("/api/uploads", uploadsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/pets", petsRoutes);
 app.use("/api/reports", reportsRoutes);
