@@ -4,6 +4,7 @@ import ComingSoonPage from "./pages/ComingSoonPage";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import ReportsMapPage from "./pages/ReportsMapPage";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
@@ -23,12 +24,7 @@ function App() {
 
         <Route
           path="/register"
-          element={
-            <ComingSoonPage
-              title="Create your PawLink account"
-              description="The registration page is currently being prepared."
-            />
-          }
+          element={<RegisterPage />}
         />
 
         <Route
