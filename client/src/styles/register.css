@@ -1,0 +1,214 @@
+
+.register-page {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  min-height: 650px;
+  background: #e8efe4;
+}
+
+/* Left visual panel */
+
+.register-visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 650px;
+  padding: 56px 52px;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(249, 250, 246, 0.92) 0%,
+      rgba(249, 250, 246, 0.45) 38%,
+      rgba(249, 250, 246, 0) 68%
+    ),
+    url("../assets/images/landing-hero.webp")
+      center bottom / cover no-repeat;
+}
+
+.register-visual-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+}
+
+.register-visual-copy h1 {
+  max-width: 440px;
+  margin: 0 0 28px;
+  color: #0c203d;
+  font-size: clamp(42px, 4.5vw, 66px);
+  line-height: 1.03;
+  letter-spacing: -2px;
+}
+
+.register-visual-copy p {
+  margin: 0;
+  color: #465b65;
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+/* Right form panel */
+
+.register-content {
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  background: linear-gradient(
+    135deg,
+    #f0f4ed 0%,
+    #dbe8d6 100%
+  );
+}
+
+.register-card {
+  width: min(100%, 460px);
+  padding: 42px;
+  border: 1px solid #dce4da;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 16px 45px rgba(24, 55, 39, 0.08);
+}
+
+.register-card h2 {
+  margin: 0 0 10px;
+  color: #0c203d;
+  font-size: clamp(28px, 3vw, 36px);
+  letter-spacing: -1px;
+}
+
+.register-description {
+  margin: 0 0 26px;
+  color: #52616b;
+  line-height: 1.6;
+}
+
+.register-card label {
+  display: block;
+  margin: 18px 0 7px;
+  color: #0c203d;
+  font-weight: 700;
+}
+
+.register-card input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid #d1d8d8;
+  border-radius: 8px;
+  color: #0c203d;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 150ms, box-shadow 150ms;
+}
+
+.register-card input:focus {
+  border-color: #278b75;
+  box-shadow: 0 0 0 3px rgba(39, 139, 117, 0.12);
+}
+
+.register-card button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 24px;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  background: #278b75;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.register-card button:hover:not(:disabled) {
+  background: #1d705e;
+}
+
+.register-card button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.register-error {
+  margin: 16px 0 0;
+  padding: 12px;
+  border-radius: 8px;
+  color: #9c2f2f;
+  background: #fff0f0;
+}
+
+.register-login {
+  margin: 26px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid #e5e9e7;
+  text-align: center;
+  color: #52616b;
+  font-size: 14px;
+}
+
+.register-login a {
+  color: #278b75;
+  font-weight: 700;
+}
+
+.register-card .register-show-password {
+  width: auto;
+  min-height: auto;
+  margin-top: 8px;
+  padding: 0;
+  background: transparent;
+  color: #278b75;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.register-card .register-show-password:hover:not(:disabled) {
+  background: transparent;
+  text-decoration: underline;
+}
+
+/* Responsive layout */
+
+@media (max-width: 850px) {
+  .register-page {
+    grid-template-columns: 1fr;
+  }
+
+  .register-visual {
+    min-height: 350px;
+    padding: 40px 28px;
+    background-position: center 58%;
+  }
+
+  .register-visual-copy h1 {
+    max-width: 360px;
+    font-size: clamp(36px, 7vw, 52px);
+  }
+
+  .register-visual-copy p {
+    font-size: 17px;
+  }
+
+  .register-content {
+    padding: 32px 20px;
+  }
+
+  .register-card {
+    padding: 30px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-visual {
+    min-height: 300px;
+    padding: 28px 20px;
+  }
+
+  .register-visual-copy h1 {
+    font-size: 36px;
+  }
+
+  .register-content {
+    padding: 20px 14px;
+  }
+}
