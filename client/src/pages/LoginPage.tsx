@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import "../styles/login.css";
-
+import { useLocation } from "react-router-dom";
 const API_URL =
   import.meta.env.VITE_API_URL ?? "http://localhost:5001";
 
@@ -10,11 +10,13 @@ type LoginResponse = {
 };
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+ 
+  const [email, setEmail] = useState(location.state?.email ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+const registered = location.state?.registered === true;
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
@@ -63,7 +65,11 @@ export default function LoginPage() {
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>Welcome back</h2>
           <p>Log in to continue to PawLink.</p>
-
+    {registered && (
+  <p className="login-success" role="status">
+    Your account was created. You can log in now.
+  </p>
+)}
           <label htmlFor="email">Email</label>
           <input
             id="email"

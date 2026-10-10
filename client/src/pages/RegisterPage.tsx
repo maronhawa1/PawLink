@@ -55,7 +55,10 @@ export default function RegisterPage() {
         throw new Error(data.message ?? "Registration failed.");
       }
 
-      navigate("/login", { replace: true });
+navigate("/login", {
+  replace: true,
+  state: { registered: true, email: email.trim() },
+});
     } catch (error) {
       setError(
         error instanceof Error
