@@ -9,6 +9,7 @@ import "../styles/login.css";
 type LoginLocationState = {
   registered?: boolean;
   email?: string;
+  from?: string;
 } | null;
 
 export default function LoginPage() {
@@ -29,7 +30,7 @@ export default function LoginPage() {
     try {
       const data = await login({ email, password }).unwrap();
       dispatch(loggedIn({ token: data.token, user: data.user }));
-      navigate("/", { replace: true });
+      navigate(state?.from ?? "/", { replace: true });
     } catch {
       return;
     }

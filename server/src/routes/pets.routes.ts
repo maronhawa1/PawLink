@@ -1,55 +1,63 @@
 import { Router } from "express";
+import { z } from "zod";
 import { db } from "../prisma/db.js";
 import { requireAuth } from "../middleware/require-auth.js";
 
 const router = Router();
 
-router.post("/", requireAuth, async (req, res) => {
-  const { name, species, sex } = req.body ?? {};
-
-  if (typeof name !== "string" || !name.trim()) {
-    res.status(400).json({ message: "Pet name is required" });
-    return;
+function emptyToUndefined(value: unknown) {
+  if (value === null || value === undefined) {
+    return undefined;
   }
 
-  if (!["DOG", "CAT", "OTHER"].includes(species)) {
-    res.status(400).json({ message: "Invalid species" });
-    return;
+  if (typeof value === "string" && !value.trim()) {
+    return undefined;
   }
 
-  if (
-    sex !== undefined &&
-    !["MALE", "FEMALE", "UNKNOWN"].includes(sex)
-  ) {
-    res.status(400).json({ message: "Invalid sex" });
-    return;
-  }
+  return value;
+}
 
-  try {
-    const pet = await db.orm.public.Pet.create({
-      name: name.trim(),
-      species,
-      sex: sex ?? "UNKNOWN",
-      ownerId: res.locals.userId,
-    });
+const optionalText = (max: number) =>
+  z.preprocess(emptyToUndefined, z.string().trim().max(max).optional());
 
-    res.status(201).json({ pet });
-  } catch (error) {
-    console.error("Create pet error:", error);
-    res.status(500).json({ message: "Failed to create pet" });
-  }
-});
-router.get("/", requireAuth, async (_req, res) => {
-  try {
-    const pets = await db.orm.public.Pet
-      .where({ ownerId: res.locals.userId })
-      .all();
-
-    res.status(200).json({ pets });
-  } catch (error) {
-    console.error("Get pets error:", error);
-    res.status(500).json({ message: "Failed to get pets" });
-  }
+const createPetSchema = z.object({
+  name: z.string().trim().min(1).max(60),
+  species: z.enum(["DOG", "CAT", "OTHER"]),
+  sex: z.preprocess(
+    emptyToUndefined,
+    z.enum(["MALE", "FEMALE", "UNKNOWN"]).optional(),
+  ),
+  breed: optionalText(60),
+  color: optionalText(40),
+  microchipNumber: z.preprocess(
+    emptyToUndefined,
+    z
+      .string()
+      .trim()
+      .regex(/^\d{9,15}$/, "Microchip number must be 9 to 15 digits")
+      .optional(),
+  ),
+  birthDate: z.preprocess(
+    emptyToUndefined,
+    z.iso
+      .date()
+      .refine(
+        (value) => new Date(value) <= new Date(),
+        "Birth date cannot be in the future",
+      )
+      .optional(),
+  ),
+  photoUrl: z.preprocess(
+    emptyToUndefined,
+    z
+      .string()
+      .trim()
+      .max(2048)
+      .url()
+      .regex(/^https?:\/\//i, "Photo URL must use HTTP or HTTPS")
+      .optional(),
+  ),
+  medicalNotes: optionalText(2000),
 });
 
 function parsePetId(value: unknown): number | null {
@@ -57,7 +65,6 @@ function parsePetId(value: unknown): number | null {
   return Number.isSafeInteger(id) && id > 0 ? id : null;
 }
 
-// Accepts an ISO date or date-time string; returns a normalized ISO string.
 function parseDate(value: unknown): string | null {
   if (typeof value !== "string" || !value.trim()) {
     return null;
@@ -67,7 +74,7 @@ function parseDate(value: unknown): string | null {
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
-function optionalText(value: unknown): string | undefined | false {
+function optionalString(value: unknown): string | undefined | false {
   if (value === undefined || value === null) {
     return undefined;
   }
@@ -79,11 +86,98 @@ function optionalText(value: unknown): string | undefined | false {
   return value.trim() || undefined;
 }
 
-// Returns the pet only when it belongs to the logged-in user.
-// A pet owned by someone else is reported as "not found" so its existence is not revealed.
 async function findOwnedPet(petId: number, userId: number) {
   return db.orm.public.Pet.where({ id: petId, ownerId: userId }).first();
 }
+
+router.post("/", requireAuth, async (req, res) => {
+  const result = createPetSchema.safeParse(req.body ?? {});
+
+  if (!result.success) {
+    res.status(400).json({
+      message: "Invalid pet details",
+      errors: result.error.issues.map((issue) => ({
+        field: issue.path.join("."),
+        message: issue.message,
+      })),
+    });
+    return;
+  }
+
+  const data = result.data;
+
+  try {
+    if (data.microchipNumber) {
+      const existing = await db.orm.public.Pet.where({
+        microchipNumber: data.microchipNumber,
+      }).first();
+
+      if (existing) {
+        res.status(409).json({
+          message: "This microchip number is already registered",
+        });
+        return;
+      }
+    }
+
+    const pet = await db.orm.public.Pet.create({
+      name: data.name,
+      species: data.species,
+      sex: data.sex ?? "UNKNOWN",
+      breed: data.breed,
+      color: data.color,
+      microchipNumber: data.microchipNumber,
+      birthDate: data.birthDate
+        ? new Date(data.birthDate).toISOString()
+        : undefined,
+      photoUrl: data.photoUrl,
+      medicalNotes: data.medicalNotes,
+      ownerId: res.locals.userId,
+    });
+
+    res.status(201).json({ pet });
+  } catch (error) {
+    console.error("Create pet error:", error);
+    res.status(500).json({ message: "Failed to create pet" });
+  }
+});
+
+router.get("/", requireAuth, async (_req, res) => {
+  try {
+    const pets = await db.orm.public.Pet
+      .where({ ownerId: res.locals.userId })
+      .orderBy([(pet) => pet.id.desc()])
+      .all();
+
+    res.status(200).json({ pets });
+  } catch (error) {
+    console.error("Get pets error:", error);
+    res.status(500).json({ message: "Failed to get pets" });
+  }
+});
+
+router.get("/:id", requireAuth, async (req, res) => {
+  const petId = parsePetId(req.params.id);
+
+  if (petId === null) {
+    res.status(400).json({ message: "Invalid pet id" });
+    return;
+  }
+
+  try {
+    const pet = await findOwnedPet(petId, res.locals.userId);
+
+    if (!pet) {
+      res.status(404).json({ message: "Pet not found" });
+      return;
+    }
+
+    res.status(200).json({ pet });
+  } catch (error) {
+    console.error("Get pet error:", error);
+    res.status(500).json({ message: "Failed to get pet" });
+  }
+});
 
 router.get("/:id/vaccinations", requireAuth, async (req, res) => {
   const petId = parsePetId(req.params.id);
@@ -156,9 +250,9 @@ router.post("/:id/vaccinations", requireAuth, async (req, res) => {
     nextDueAtIso = parsed;
   }
 
-  const clinic = optionalText(clinicName);
-  const noteText = optionalText(notes);
-  const document = optionalText(documentUrl);
+  const clinic = optionalString(clinicName);
+  const noteText = optionalString(notes);
+  const document = optionalString(documentUrl);
 
   if (clinic === false || noteText === false || document === false) {
     res.status(400).json({
