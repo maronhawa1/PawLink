@@ -8,10 +8,11 @@ import {
 } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
 import {
-  getReports,
+  useGetReportsQuery,
   type AnimalReport,
   type ReportType,
-} from "../services/reports.service";
+} from "../api/reportsApi";
+import { getErrorMessage } from "../api/getErrorMessage";
 import "leaflet/dist/leaflet.css";
 import "../styles/reports-map.css";
 
@@ -71,9 +72,15 @@ function formatDate(value: string) {
 }
 
 export default function ReportsMapPage() {
-  const [reports, setReports] = useState<AnimalReport[]>(
-    []
-  );
+  const {
+    data: reports = [],
+    isLoading,
+    error: loadError,
+  } = useGetReportsQuery();
+
+  const error = loadError
+    ? getErrorMessage(loadError, "Unable to load reports")
+    : "";
 
   const [selectedType, setSelectedType] = useState<
     ReportType | "ALL"
@@ -88,32 +95,8 @@ export default function ReportsMapPage() {
   const [selectedReportId, setSelectedReportId] =
     useState<number | null>(null);
 
-  const [isLoading, setIsLoading] = useState(true);
   const [isLocating, setIsLocating] = useState(false);
-  const [error, setError] = useState("");
   const [locationError, setLocationError] = useState("");
-
-  useEffect(() => {
-    async function loadReports() {
-      try {
-        setError("");
-
-        const data = await getReports();
-
-        setReports(data);
-      } catch (loadError) {
-        setError(
-          loadError instanceof Error
-            ? loadError.message
-            : "Unable to load reports"
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    void loadReports();
-  }, []);
 
   const visibleReports = useMemo(() => {
     return reports.filter((report) => {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   CircleMarker,
   MapContainer,
@@ -7,10 +7,9 @@ import {
 } from "react-leaflet";
 import type { LatLngExpression } from "leaflet";
 import {
-  getReports,
-  type AnimalReport,
+  useGetReportsQuery,
   type ReportType,
-} from "../../services/reports.service";
+} from "../../api/reportsApi";
 import "leaflet/dist/leaflet.css";
 
 const DEFAULT_CENTER: LatLngExpression = [
@@ -33,26 +32,11 @@ const reportColors: Record<ReportType, string> = {
 };
 
 export default function ReportsPreviewSection() {
-  const [reports, setReports] = useState<AnimalReport[]>(
-    []
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    async function loadReports() {
-      try {
-        const data = await getReports();
-        setReports(data);
-      } catch {
-        setHasError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    void loadReports();
-  }, []);
+  const {
+    data: reports = [],
+    isLoading,
+    isError: hasError,
+  } = useGetReportsQuery();
 
   const previewReports = useMemo(() => {
     return reports

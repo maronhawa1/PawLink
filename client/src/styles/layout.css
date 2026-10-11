@@ -135,3 +135,14 @@
   outline-offset: 3px;
   border-radius: 8px;
 }
+.header-greeting {
+  color: #527092;
+  font-weight: 600;
+}
+
+.logout-button {
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
