@@ -1,72 +1,56 @@
-
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useRegisterMutation } from "../api/authApi";
+import { getErrorMessage } from "../api/getErrorMessage";
 import "../styles/register.css";
-
-const API_URL =
-  import.meta.env.VITE_API_URL ?? "http://localhost:5001";
-
-type RegisterResponse = {
-  message?: string;
-};
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const [register, { isLoading, error: registerError }] =
+    useRegisterMutation();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  const error =
+    formError ||
+    (registerError
+      ? getErrorMessage(
+          registerError,
+          "Unable to create your account. Please try again."
+        )
+      : "");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError("");
+    setFormError("");
 
     if (!name.trim()) {
-      setError("Please enter your name.");
+      setFormError("Please enter your name.");
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must contain at least 8 characters.");
+      setFormError("Password must contain at least 8 characters.");
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      const response = await fetch(`${API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          password,
-        }),
+      await register({
+        name: name.trim(),
+        email: email.trim(),
+        password,
+      }).unwrap();
+
+      navigate("/login", {
+        replace: true,
+        state: { registered: true, email: email.trim() },
       });
-
-      const data = (await response.json()) as RegisterResponse;
-
-      if (!response.ok) {
-        throw new Error(data.message ?? "Registration failed.");
-      }
-
-navigate("/login", {
-  replace: true,
-  state: { registered: true, email: email.trim() },
-});
-    } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Unable to create your account. Please try again.",
-      );
-    } finally {
-      setIsLoading(false);
+    } catch {
+      return;
     }
   }
 
@@ -130,7 +114,7 @@ navigate("/login", {
             type="button"
             className="register-show-password"
             onClick={() => setShowPassword(!showPassword)}
-            >
+          >
             {showPassword ? "Hide password" : "Show password"}
           </button>
 
