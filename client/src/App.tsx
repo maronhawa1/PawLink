@@ -5,6 +5,7 @@ import ComingSoonPage from "./pages/ComingSoonPage";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import MyPetsPage from "./pages/MyPetsPage";
+import PetPassportPage from "./pages/PetPassportPage";
 import ReportsMapPage from "./pages/ReportsMapPage";
 import RegisterPage from "./pages/RegisterPage";
 
@@ -41,6 +42,7 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/my-pets" element={<MyPetsPage />} />
+          <Route path="/my-pets/:id" element={<PetPassportPage />} />
         </Route>
 
         <Route
