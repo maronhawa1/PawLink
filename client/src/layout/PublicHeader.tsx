@@ -1,10 +1,18 @@
-import {
-  Link,
-  NavLink,
-} from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { loggedOut } from "../store/authSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import "../styles/layout.css";
 
 export default function PublicHeader() {
+  const user = useAppSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    dispatch(loggedOut());
+    navigate("/");
+  }
+
   return (
     <header className="public-header">
       <Link
@@ -45,13 +53,31 @@ export default function PublicHeader() {
       </nav>
 
       <div className="public-actions">
-        <Link className="login-link" to="/login">
-          Log in
-        </Link>
+        {user ? (
+          <>
+            <span className="header-greeting">
+              Hi, {user.name ?? user.email}
+            </span>
 
-        <Link className="signup-link" to="/register">
-          Sign up
-        </Link>
+            <button
+              type="button"
+              className="login-link logout-button"
+              onClick={handleLogout}
+            >
+              Log out
+            </button>
+          </>
+        ) : (
+          <>
+            <Link className="login-link" to="/login">
+              Log in
+            </Link>
+
+            <Link className="signup-link" to="/register">
+              Sign up
+            </Link>
+          </>
+        )}
       </div>
     </header>
   );
