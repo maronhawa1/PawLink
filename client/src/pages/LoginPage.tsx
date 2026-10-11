@@ -30,7 +30,7 @@ export default function LoginPage() {
     try {
       const data = await login({ email, password }).unwrap();
       dispatch(loggedIn({ token: data.token, user: data.user }));
-      navigate(state?.from ?? "/", { replace: true });
+      navigate(state?.from ?? "/dashboard", { replace: true });
     } catch {
       return;
     }

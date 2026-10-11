@@ -1,5 +1,10 @@
 import heroImage from "../../assets/images/landing-hero.webp";
+import { Link } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
+
 export default function HeroSection() {
+  const user = useAppSelector((state) => state.auth.user);
+  
   return (
     <section className="landing-hero">
       <div className="landing-hero-content">
@@ -16,19 +21,19 @@ export default function HeroSection() {
         </p>
 
         <div className="landing-hero-actions">
-          <a
+          <Link
             className="landing-primary-button"
-            href="/register"
+            to={user ? "/dashboard" : "/register"}
           >
-            Get started
-          </a>
+            {user ? "Go to Dashboard" : "Get started"}
+          </Link>
 
-          <a
+          <Link
             className="landing-secondary-button"
-            href="/reports/new"
+            to="/reports/new"
           >
             Report an animal
-          </a>
+          </Link>
         </div>
 
         <ul className="landing-hero-highlights">

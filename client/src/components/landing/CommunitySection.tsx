@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
+
 const benefits = [
   {
     title: "Organized pet information",
@@ -17,6 +20,7 @@ const benefits = [
 ];
 
 export default function CommunitySection() {
+  const user = useAppSelector((state) => state.auth.user);
   return (
    <section
   id="about"
@@ -33,10 +37,10 @@ export default function CommunitySection() {
           clearly when an animal needs attention.
         </p>
 
-        <a href="/register">
-          Join the PawLink community
+        <Link to={user ? "/dashboard" : "/register"}>
+          {user ? "Go to Dashboard" : "Join the PawLink community"}
           <span aria-hidden="true">→</span>
-        </a>
+        </Link>
       </div>
 
       <div className="landing-community-benefits">
