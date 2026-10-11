@@ -50,6 +50,17 @@ export default function PublicHeader() {
         >
           Reports map
         </NavLink>
+
+        {user && (
+          <NavLink
+            to="/my-pets"
+            className={({ isActive }) =>
+              isActive ? "active" : undefined
+            }
+          >
+            My pets
+          </NavLink>
+        )}
       </nav>
 
       <div className="public-actions">
