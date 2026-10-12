@@ -1,52 +1,38 @@
 import { useState, type FormEvent } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../api/authApi";
+import { getErrorMessage } from "../api/getErrorMessage";
+import { loggedIn } from "../store/authSlice";
+import { useAppDispatch } from "../store/hooks";
 import "../styles/login.css";
 
-const API_URL =
-  import.meta.env.VITE_API_URL ?? "http://localhost:5001";
-
-type LoginResponse = {
-  message?: string;
-  token?: string;
-};
+type LoginLocationState = {
+  registered?: boolean;
+  email?: string;
+  from?: string;
+} | null;
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const [login, { isLoading, error }] = useLoginMutation();
+
+  const state = location.state as LoginLocationState;
+  const registered = state?.registered === true;
+
+  const [email, setEmail] = useState(state?.email ?? "");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError("");
-    setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = (await response.json()) as LoginResponse;
-
-      if (!response.ok || !data.token) {
-        throw new Error(data.message ?? "Login failed");
-      }
-
-      localStorage.setItem("pawlink_token", data.token);
-
-    
-      window.location.assign("/");
-    } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "Unable to log in",
-      );
-    } finally {
-      setIsLoading(false);
+      const data = await login({ email, password }).unwrap();
+      dispatch(loggedIn({ token: data.token, user: data.user }));
+      navigate(state?.from ?? "/dashboard", { replace: true });
+    } catch {
+      return;
     }
   }
 
@@ -63,6 +49,12 @@ export default function LoginPage() {
         <form className="login-card" onSubmit={handleSubmit}>
           <h2>Welcome back</h2>
           <p>Log in to continue to PawLink.</p>
+
+          {registered && (
+            <p className="login-success" role="status">
+              Your account was created. You can log in now.
+            </p>
+          )}
 
           <label htmlFor="email">Email</label>
           <input
@@ -88,7 +80,7 @@ export default function LoginPage() {
 
           {error && (
             <p className="login-error" role="alert">
-              {error}
+              {getErrorMessage(error, "Login failed")}
             </p>
           )}
 
@@ -97,7 +89,7 @@ export default function LoginPage() {
           </button>
 
           <p className="login-register">
-            New to PawLink? <a href="/register">Sign up</a>
+            New to PawLink? <Link to="/register">Sign up</Link>
           </p>
         </form>
       </section>

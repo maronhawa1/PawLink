@@ -205,3 +205,10 @@
     font-size: 32px;
   }
 }
+.login-success {
+  margin: 0 0 8px;
+  padding: 12px;
+  border-radius: 10px;
+  color: #147557;
+  background: #e1f5ee;
+}

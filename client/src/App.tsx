@@ -1,10 +1,16 @@
 import { Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
 import PublicLayout from "./layout/PublicLayout";
 import ComingSoonPage from "./pages/ComingSoonPage";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import ReportDetailsPage from "./pages/ReportDetailsPage";
+import MyPetsPage from "./pages/MyPetsPage";
+import PetPassportPage from "./pages/PetPassportPage";
 import ReportsMapPage from "./pages/ReportsMapPage";
+import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
+import AddPetPage from "./pages/AddPetPage";
 
 function App() {
   return (
@@ -24,12 +30,7 @@ function App() {
 
         <Route
           path="/register"
-          element={
-            <ComingSoonPage
-              title="Create your PawLink account"
-              description="The registration page is currently being prepared."
-            />
-          }
+          element={<RegisterPage />}
         />
 
         <Route
@@ -41,6 +42,13 @@ function App() {
             />
           }
         />
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/my-pets" element={<MyPetsPage />} />
+          <Route path="/my-pets/:id" element={<PetPassportPage />} />
+          <Route path="/my-pets/new" element={<AddPetPage />} />
+        </Route>
 
         <Route
           path="/reports/:id"

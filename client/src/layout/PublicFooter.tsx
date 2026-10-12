@@ -1,6 +1,9 @@
+import { useAppSelector } from "../store/hooks";
+
 const currentYear = new Date().getFullYear();
 
 export default function PublicFooter() {
+  const user = useAppSelector((state) => state.auth.user);
   return (
     <footer className="public-footer">
       <div className="public-footer-content">
@@ -29,10 +32,18 @@ export default function PublicFooter() {
 
           <div>
             <h2>Account</h2>
-            <a href="/login">Log in</a>
-            <a href="/register">Create account</a>
-            <a href="/pets">My pets</a>
-          </div>
+            {user ? (
+              <>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/my-pets">My pets</a>
+             </>
+            ) : (
+              <>
+                <a href="/login">Log in</a>
+                <a href="/register">Create account</a>
+              </>
+            )}
+        </div>
 
           <div>
             <h2>Information</h2>

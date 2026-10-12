@@ -1,4 +1,8 @@
+import { Link } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
+
 export default function CallToActionSection() {
+  const user = useAppSelector((state) => state.auth.user);
   return (
     <section className="landing-cta">
       <div>
@@ -13,19 +17,19 @@ export default function CallToActionSection() {
       </div>
 
       <div className="landing-cta-actions">
-        <a
+        <Link
           className="landing-cta-primary"
-          href="/register"
+          to={user ? "/dashboard" : "/register"}
         >
-          Create an account
-        </a>
+          {user ? "Go to Dashboard" : "Create an account"}
+        </Link>
 
-        <a
+        <Link
           className="landing-cta-secondary"
-          href="/reports/new"
+          to="/reports/new"
         >
           Report an animal
-        </a>
+        </Link>
       </div>
     </section>
   );

@@ -6,6 +6,20 @@ import { pool } from "../config/pool.js";
 
 const router = Router();
 
+const reportTypes = [
+  "INJURED",
+  "LOST",
+  "FOUND",
+  "NEEDS_RESCUE",
+] as const;
+
+const reportStatuses = [
+  "OPEN",
+  "IN_PROGRESS",
+  "RESOLVED",
+  "CLOSED",
+] as const;
+
 function emptyToUndefined(value: unknown) {
   if (value === null || value === undefined) {
     return undefined;
@@ -22,7 +36,7 @@ const createReportSchema = z
   .object({
     title: z.string().trim().min(1).max(120),
     description: z.string().trim().min(1).max(5000),
-    type: z.enum(["INJURED", "LOST", "FOUND", "NEEDS_RESCUE"]),
+    type: z.enum(reportTypes),
 
     animalType: z.preprocess(
       (value) => value === null ? undefined : value,
@@ -98,6 +112,53 @@ router.get("/", async (req, res) => {
     return;
   }
 
+  const typeValue = req.query.type;
+  const statusValue = req.query.status;
+
+  if (
+    typeValue !== undefined &&
+    (typeof typeValue !== "string" ||
+      !reportTypes.includes(typeValue as (typeof reportTypes)[number]))
+  ) {
+    res.status(400).json({
+      message: `Type must be one of: ${reportTypes.join(", ")}`,
+    });
+    return;
+  }
+
+  if (
+    statusValue !== undefined &&
+    (typeof statusValue !== "string" ||
+      !reportStatuses.includes(
+        statusValue as (typeof reportStatuses)[number],
+      ))
+  ) {
+    res.status(400).json({
+      message: `Status must be one of: ${reportStatuses.join(", ")}`,
+    });
+    return;
+  }
+
+  const conditions = [
+    `"latitude" BETWEEN -90 AND 90`,
+    `"longitude" BETWEEN -180 AND 180`,
+  ];
+  const params: unknown[] = [];
+
+  if (typeValue !== undefined) {
+    params.push(typeValue);
+    conditions.push(`"type" = $${params.length}`);
+  }
+
+  if (statusValue !== undefined) {
+    params.push(statusValue);
+    conditions.push(`"status" = $${params.length}`);
+  }
+
+  params.push(limit + 1, offset);
+  const limitParam = params.length - 1;
+  const offsetParam = params.length;
+
   try {
     const result = await pool.query(
       `
@@ -114,12 +175,11 @@ router.get("/", async (req, res) => {
           "longitude",
           "createdAt"
         FROM public."report"
-        WHERE "latitude" BETWEEN -90 AND 90
-          AND "longitude" BETWEEN -180 AND 180
+        WHERE ${conditions.join(" AND ")}
         ORDER BY "createdAt" DESC, "id" DESC
-        LIMIT $1 OFFSET $2
+        LIMIT $${limitParam} OFFSET $${offsetParam}
       `,
-      [limit + 1, offset],
+      params,
     );
 
     const hasMore = result.rows.length > limit;
