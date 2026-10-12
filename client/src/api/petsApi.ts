@@ -60,6 +60,18 @@ export const petsApi = baseApi.injectEndpoints({
       transformResponse: (response: { pet: Pet }) => response.pet,
       providesTags: (_result, _error, id) => [{ type: "Pets", id }],
     }),
+    uploadPetImage: builder.mutation<{ url: string }, File>({
+      query: (file) => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        return {
+          url: "/uploads/pets",
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
     addPet: builder.mutation<Pet, NewPet>({
       query: (body) => ({
         url: "/pets",
@@ -98,6 +110,7 @@ export const petsApi = baseApi.injectEndpoints({
 export const {
   useGetPetsQuery,
   useGetPetQuery,
+  useUploadPetImageMutation,
   useAddPetMutation,
   useGetVaccinationsQuery,
   useAddVaccinationMutation,
