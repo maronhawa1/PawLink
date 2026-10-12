@@ -4,6 +4,7 @@ import PublicLayout from "./layout/PublicLayout";
 import ComingSoonPage from "./pages/ComingSoonPage";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
+import ReportDetailsPage from "./pages/ReportDetailsPage";
 import MyPetsPage from "./pages/MyPetsPage";
 import PetPassportPage from "./pages/PetPassportPage";
 import ReportsMapPage from "./pages/ReportsMapPage";
@@ -48,6 +49,11 @@ function App() {
           <Route path="/my-pets/:id" element={<PetPassportPage />} />
           <Route path="/my-pets/new" element={<AddPetPage />} />
         </Route>
+
+        <Route
+          path="/reports/:id"
+          element={<ReportDetailsPage />}
+        />
 
         <Route
           path="*"
