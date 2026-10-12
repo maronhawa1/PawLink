@@ -6,6 +6,10 @@
 }
 
 .my-pets-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
   margin-bottom: 32px;
 }
 
@@ -20,6 +24,40 @@
   margin: 10px 0 0;
   color: #637595;
   font-size: 1.05rem;
+}
+
+.add-pet-button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 50px;
+  padding: 0 22px;
+  border-radius: 12px;
+  background: #238f73;
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(35, 143, 115, 0.2);
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.add-pet-button:hover {
+  background: #19765f;
+  transform: translateY(-1px);
+}
+
+.add-pet-button span {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #238f73;
 }
 
 .pets-message {
@@ -119,4 +157,11 @@
   margin-top: 12px;
   color: #238f73;
   font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .my-pets-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

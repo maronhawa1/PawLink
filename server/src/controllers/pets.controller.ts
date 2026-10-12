@@ -57,6 +57,46 @@ const createPetSchema = z.object({
   medicalNotes: optionalText(2000),
 });
 
+function emptyToNull(value: unknown) {
+  if (typeof value === "string" && !value.trim()) {
+    return null;
+  }
+
+  return value;
+}
+
+const clearableText = (max: number) =>
+  z.preprocess(emptyToNull, z.string().trim().max(max).nullable().optional());
+
+const updatePetSchema = z.object({
+  name: z.string().trim().min(1).max(60).optional(),
+  species: z.enum(["DOG", "CAT", "OTHER"]).optional(),
+  sex: z.enum(["MALE", "FEMALE", "UNKNOWN"]).optional(),
+  breed: clearableText(60),
+  color: clearableText(40),
+  microchipNumber: z.preprocess(
+    emptyToNull,
+    z
+      .string()
+      .trim()
+      .regex(/^\d{9,15}$/, "Microchip number must be 9 to 15 digits")
+      .nullable()
+      .optional(),
+  ),
+  birthDate: z.preprocess(
+    emptyToNull,
+    z.iso
+      .date()
+      .refine(
+        (value) => new Date(value) <= new Date(),
+        "Birth date cannot be in the future",
+      )
+      .nullable()
+      .optional(),
+  ),
+  medicalNotes: clearableText(2000),
+});
+
 function parsePetId(value: unknown): number | null {
   const id = Number(value);
   return Number.isSafeInteger(id) && id > 0 ? id : null;
@@ -280,5 +320,95 @@ export const addVaccination: RequestHandler = async (req, res) => {
   } catch (error) {
     console.error("Create vaccination error:", error);
     res.status(500).json({ message: "Failed to create vaccination" });
+  }
+};
+
+export const updatePet: RequestHandler = async (req, res) => {
+  const petId = parsePetId(req.params.id);
+
+  if (petId === null) {
+    res.status(400).json({ message: "Invalid pet id" });
+    return;
+  }
+
+  const result = updatePetSchema.safeParse(req.body ?? {});
+
+  if (!result.success) {
+    res.status(400).json({
+      message: "Invalid pet details",
+      errors: result.error.issues.map((issue) => ({
+        field: issue.path.join("."),
+        message: issue.message,
+      })),
+    });
+    return;
+  }
+
+  const data = result.data;
+
+  try {
+    const pet = await findOwnedPet(petId, res.locals.userId);
+
+    if (!pet) {
+      res.status(404).json({ message: "Pet not found" });
+      return;
+    }
+
+    if (data.microchipNumber && data.microchipNumber !== pet.microchipNumber) {
+      const existing = await db.orm.public.Pet.where({
+        microchipNumber: data.microchipNumber,
+      }).first();
+
+      if (existing) {
+        res.status(409).json({
+          message: "This microchip number is already registered",
+        });
+        return;
+      }
+    }
+
+    const updated = await db.orm.public.Pet.where({ id: petId }).update({
+      name: data.name,
+      species: data.species,
+      sex: data.sex,
+      breed: data.breed,
+      color: data.color,
+      microchipNumber: data.microchipNumber,
+      birthDate:
+        data.birthDate === undefined || data.birthDate === null
+          ? data.birthDate
+          : new Date(data.birthDate).toISOString(),
+      medicalNotes: data.medicalNotes,
+    });
+
+    res.status(200).json({ pet: updated });
+  } catch (error) {
+    console.error("Update pet error:", error);
+    res.status(500).json({ message: "Failed to update pet" });
+  }
+};
+
+export const deletePet: RequestHandler = async (req, res) => {
+  const petId = parsePetId(req.params.id);
+
+  if (petId === null) {
+    res.status(400).json({ message: "Invalid pet id" });
+    return;
+  }
+
+  try {
+    const pet = await findOwnedPet(petId, res.locals.userId);
+
+    if (!pet) {
+      res.status(404).json({ message: "Pet not found" });
+      return;
+    }
+
+    await db.orm.public.Pet.where({ id: petId }).delete();
+
+    res.status(204).end();
+  } catch (error) {
+    console.error("Delete pet error:", error);
+    res.status(500).json({ message: "Failed to delete pet" });
   }
 };
