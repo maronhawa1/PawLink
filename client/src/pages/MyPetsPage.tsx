@@ -22,10 +22,12 @@ export default function MyPetsPage() {
   return (
     <main className="my-pets-page">
       <section className="my-pets-heading">
-        <h1>My pets</h1>
-        <Link to="/my-pets/new" className="add-pet-button">
-          + Add Pet
-        </Link>
+        <div className="my-pets-heading-top">
+          <h1>My pets</h1>
+          <Link to="/my-pets/new" className="my-pets-add-button">
+            + Add Pet
+          </Link>
+        </div>
         <p>Keep your pets' details and passports in one place.</p>
       </section>
 

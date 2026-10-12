@@ -3,6 +3,7 @@
   margin: 0 auto;
   padding: 48px 0 64px;
   color: #0e2a5a;
+  min-width: 0;
 }
 
 .my-pets-heading {
@@ -11,7 +12,7 @@
 
 .my-pets-heading h1 {
   margin: 0;
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
   line-height: 1.1;
   letter-spacing: -0.03em;
 }
@@ -20,6 +21,38 @@
   margin: 10px 0 0;
   color: #637595;
   font-size: 1.05rem;
+}
+
+.my-pets-heading-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+}
+
+.my-pets-heading-top > :first-child {
+  min-width: 0;
+}
+
+.my-pets-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 22px;
+  border-radius: 10px;
+  background: #238f73;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 160ms ease;
+}
+
+
+.my-pets-add-button:hover {
+  background: #19745d;
 }
 
 .pets-message {
@@ -58,10 +91,13 @@
 .pets-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 24px;
+  gap: 35px;
+  min-width: 0;
 }
 
-.pet-card {
+.pet-card {  
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid #dce8e4;
   border-radius: 18px;
@@ -82,6 +118,8 @@
 .pet-card-photo {
   display: grid;
   height: 180px;
+  flex: 0 0 180px;
+  overflow: hidden;
   place-items: center;
   background: #e9f5f1;
 }
@@ -98,6 +136,11 @@
 
 .pet-card-body {
   padding: 18px 20px 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background: #ffffff;
 }
 
 .pet-card-body h2 {
@@ -116,7 +159,43 @@
 
 .pet-card-link {
   display: inline-block;
-  margin-top: 12px;
+  margin-top: auto;
+  padding-top: 12px;
   color: #238f73;
   font-weight: 700;
+}
+
+
+
+@media (max-width: 600px) {
+  .my-pets-page {
+    width: calc(100% - 100px);
+    padding: 32px 0 48px;
+  }
+
+  .pets-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .pet-card-photo {
+    flex-basis: 200px;
+  }
+
+  .my-pets-add-button {
+    padding: 11px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1000px) {
+  .pets-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 400px) {
+  .my-pets-page {
+    width: calc(100% - 50px);
+  }
 }

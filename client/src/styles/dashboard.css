@@ -10,7 +10,7 @@
 
 .dashboard-hero {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns:  1fr 1fr;
   overflow: hidden;
   min-height: 330px;
   border-radius: 24px;
@@ -51,10 +51,27 @@
 
 .dashboard-hero-image {
   min-height: 280px;
-  background-image: url("../assets/images/landing-hero.webp");
+  background-image:
+  linear-gradient(
+    rgba(233, 245, 241, 0.18),
+    rgba(233, 245, 241, 0.18)
+  ),
+  linear-gradient(
+    to right,
+    #e9f5f1 0%,
+    rgba(233, 245, 241, 0.95) 10%,
+    rgba(233, 245, 241, 0.65) 25%,
+    rgba(233, 245, 241, 0.25) 35%,
+    transparent 45%
+  ),
+  url("../assets/images/dashboard-header2.jpg");
+
   background-position: center;
   background-size: cover;
+  background-repeat: no-repeat;
 }
+
+
 
 .dashboard-hero-actions {
   display: flex;
@@ -293,9 +310,24 @@
     grid-template-columns: 1fr;
   }
 
-  .dashboard-hero-image {
-    min-height: 240px;
-  }
+.dashboard-hero {
+  grid-template-columns: 1fr;
+}
+
+.dashboard-hero-image {
+  order: 1;
+  min-height: 220px;
+  background-image: url("../assets/images/dashboard-header2.jpg");
+  background-position: center 45%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.dashboard-hero-copy {
+  order: 2;
+  position: relative;
+  z-index: 1;
+}
 
   .dashboard-pets-grid,
   .dashboard-reports-grid {

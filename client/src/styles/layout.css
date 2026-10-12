@@ -45,10 +45,14 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   color: #62758e;
 }
 
+.account-divider {
+  color: #b7cbc4;
+  font-weight: 400;
+}
 .signup-link {
   padding: 11px 20px;
   border-radius: 10px;
@@ -308,7 +312,7 @@
   }
 
   .public-desktop-user {
-    margin-left: 48px;
+    margin-left: 0;
     flex-shrink: 0;
   }
 
