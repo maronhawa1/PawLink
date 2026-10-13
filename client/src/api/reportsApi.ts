@@ -28,6 +28,17 @@ export type AnimalReport = {
   createdAt: string;
 };
 
+export type NewReport = {
+  title: string;
+  description: string;
+  type: ReportType;
+  animalType?: AnimalType;
+  photoUrl?: string;
+  locationText?: string;
+  latitude?: number;
+  longitude?: number;
+};
+
 type ReportsResponse = {
   reports: AnimalReport[];
 };
@@ -39,7 +50,33 @@ export const reportsApi = baseApi.injectEndpoints({
       transformResponse: (response: ReportsResponse) => response.reports,
       providesTags: ["Reports"],
     }),
+    createReport: builder.mutation<AnimalReport, NewReport>({
+      query: (body) => ({
+        url: "/reports",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (response: { report: AnimalReport }) =>
+        response.report,
+      invalidatesTags: ["Reports"],
+    }),
+    uploadReportImage: builder.mutation<{ url: string }, File>({
+      query: (file) => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        return {
+          url: "/uploads/reports",
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
   }),
 });
 
-export const { useGetReportsQuery } = reportsApi;
+export const { 
+  useGetReportsQuery, 
+  useCreateReportMutation, 
+  useUploadReportImageMutation 
+} = reportsApi;
