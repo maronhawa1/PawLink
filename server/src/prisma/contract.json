@@ -4,6 +4,10 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "helpOffer": {
+      "model": "HelpOffer",
+      "namespace": "public"
+    },
     "pet": {
       "model": "Pet",
       "namespace": "public"
@@ -29,6 +33,27 @@
     "namespaces": {
       "public": {
         "enum": {
+          "HelpOfferStatus": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "PENDING",
+                "value": "PENDING"
+              },
+              {
+                "name": "ACCEPTED",
+                "value": "ACCEPTED"
+              },
+              {
+                "name": "DECLINED",
+                "value": "DECLINED"
+              },
+              {
+                "name": "WITHDRAWN",
+                "value": "WITHDRAWN"
+              }
+            ]
+          },
           "PetSex": {
             "codecId": "pg/text@1",
             "members": [
@@ -107,6 +132,126 @@
           }
         },
         "models": {
+          "HelpOffer": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "message": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "reportId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "HelpOfferStatus",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "volunteerId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "report": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "reportId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Report",
+                  "namespace": "public"
+                }
+              },
+              "volunteer": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "volunteerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "message": {
+                  "column": "message"
+                },
+                "reportId": {
+                  "column": "reportId"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "volunteerId": {
+                  "column": "volunteerId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "helpOffer"
+            }
+          },
           "Pet": {
             "fields": {
               "birthDate": {
@@ -428,6 +573,21 @@
                   "namespace": "public"
                 }
               },
+              "helpOffers": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "reportId"
+                  ]
+                },
+                "to": {
+                  "model": "HelpOffer",
+                  "namespace": "public"
+                }
+              },
               "reporter": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -672,6 +832,21 @@
               }
             },
             "relations": {
+              "helpOffers": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "volunteerId"
+                  ]
+                },
+                "to": {
+                  "model": "HelpOffer",
+                  "namespace": "public"
+                }
+              },
               "pets": {
                 "cardinality": "1:N",
                 "on": {
@@ -898,6 +1073,146 @@
       "public": {
         "entries": {
           "table": {
+            "helpOffer": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('PENDING', 'ACCEPTED', 'DECLINED', 'WITHDRAWN')",
+                  "name": "helpOffer_status_check_56f8fe8d",
+                  "prefix": "helpOffer_status_check"
+                }
+              ],
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "message": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "reportId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "PENDING"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "HelpOfferStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "volunteerId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "reportId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "helpOffer"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "report"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "volunteerId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "helpOffer"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "reportId"
+                  ],
+                  "name": "helpOffer_reportId_idx_d163019e",
+                  "prefix": "helpOffer_reportId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "reportId",
+                    "status"
+                  ],
+                  "name": "helpOffer_reportId_status_idx_79d493b7",
+                  "prefix": "helpOffer_reportId_status_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "volunteerId"
+                  ],
+                  "name": "helpOffer_volunteerId_idx_b41cb3e4",
+                  "prefix": "helpOffer_volunteerId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "reportId",
+                    "volunteerId"
+                  ]
+                }
+              ]
+            },
             "pet": {
               "checks": [
                 {
@@ -1513,6 +1828,15 @@
             }
           },
           "valueSet": {
+            "HelpOfferStatus": {
+              "kind": "valueSet",
+              "values": [
+                "PENDING",
+                "ACCEPTED",
+                "DECLINED",
+                "WITHDRAWN"
+              ]
+            },
             "PetSex": {
               "kind": "valueSet",
               "values": [
@@ -1553,12 +1877,27 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "370e4b2879ab62360ce0775235ca360f4c0cb598c91a11d0215ca184677ccf77"
+    "storageHash": "2959002f5c6dbbaa64dffaad28f80ca7e853ae5ea337ba7552168995d32a8ed6"
   },
   "execution": {
-    "executionHash": "37baa6adc5692ef1244109b1bdc80ac8dba66cf48a8d47c977b3e9da474242c6",
+    "executionHash": "e70b3268a48b9e91214d52c8c609ea16e7c469ae2cadd60785478839ae592e49",
     "mutations": {
       "defaults": [
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "updatedAt",
+            "namespace": "public",
+            "table": "helpOffer"
+          }
+        },
         {
           "onCreate": {
             "id": "timestampNow",
