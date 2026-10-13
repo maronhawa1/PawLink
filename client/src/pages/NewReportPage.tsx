@@ -1,5 +1,5 @@
-
-import { useEffect, useState, type FormEvent } from "react";
+import "../styles/add-report-form.css";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   CircleMarker,
@@ -76,10 +76,11 @@ function LocationController({
 
 export default function NewReportPage() {
   const navigate = useNavigate();
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState<ReportType>("INJURED");
+  const [type, setType] = useState<ReportType | "">("");
   const [animalType, setAnimalType] = useState<AnimalType | "">("");
   const [locationText, setLocationText] = useState("");
   const [position, setPosition] = useState<Position | null>(null);
@@ -104,9 +105,13 @@ export default function NewReportPage() {
 
     const url = URL.createObjectURL(photo);
     setPhotoPreview(url);
-
     return () => URL.revokeObjectURL(url);
   }, [photo]);
+
+  function clearPhoto() {
+    setPhoto(null);
+    if (photoInputRef.current) photoInputRef.current.value = "";
+  }
 
   function handleUseMyLocation() {
     setFormError("");
@@ -121,8 +126,8 @@ export default function NewReportPage() {
     navigator.geolocation.getCurrentPosition(
       (result) => {
         const location = {
-            latitude: result.coords.latitude,
-            longitude: result.coords.longitude,
+          latitude: result.coords.latitude,
+          longitude: result.coords.longitude,
         };
         setPosition(location);
         setCurrentLocation(location);
@@ -135,7 +140,6 @@ export default function NewReportPage() {
             : error.code === 2
               ? "Your current location is unavailable. Select a point on the map."
               : "Finding your location took too long. Select a point on the map.";
-
         setFormError(message);
         setIsLocating(false);
       },
@@ -149,10 +153,13 @@ export default function NewReportPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     if (isSubmitting) return;
-
     setFormError("");
+
+    if (!type) {
+      setFormError("Please select a report type.");
+      return;
+    }
 
     if (!title.trim() || !description.trim()) {
       setFormError("Please enter a title and description.");
@@ -198,185 +205,216 @@ export default function NewReportPage() {
 
   return (
     <main className="new-report-page">
-      <Link to="/reports">← Back to Reports Map</Link>
+      <Link to="/reports/map" className="new-report-back">
+        ← Back to Reports Map
+      </Link>
 
-      <h1>Report an animal</h1>
-      <p>Share the details so others in your community can help.</p>
-
-      <form onSubmit={handleSubmit}>
-        <label>
-          Report type *
-          <select
-            value={type}
-            onChange={(event) =>
-              setType(event.target.value as ReportType)
-            }
-          >
-            <option value="INJURED">Injured</option>
-            <option value="LOST">Lost</option>
-            <option value="FOUND">Found</option>
-            <option value="NEEDS_RESCUE">Needs rescue</option>
-          </select>
-        </label>
-
-        <label>
-          Animal type
-          <select
-            value={animalType}
-            onChange={(event) =>
-              setAnimalType(event.target.value as AnimalType | "")
-            }
-          >
-            <option value="">Not sure</option>
-            <option value="DOG">Dog</option>
-            <option value="CAT">Cat</option>
-            <option value="OTHER">Other</option>
-          </select>
-        </label>
-
-        <label>
-          Title *
-          <input
-            type="text"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            maxLength={120}
-            placeholder="e.g. Injured dog near the park"
-            required
-          />
-        </label>
-
-        <label>
-          Description *
-          <textarea
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            maxLength={5000}
-            rows={4}
-            placeholder="Describe the animal's condition and what happened."
-            required
-          />
-        </label>
-
-        <label>
-          Animal photo (optional)
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={(event) => {
-              const file = event.target.files?.[0] ?? null;
-
-              if (file && file.size > 5 * 1024 * 1024) {
-                setFormError("Photo must be 5 MB or smaller.");
-                event.target.value = "";
-                setPhoto(null);
-                return;
-              }
-
-              setFormError("");
-              setPhoto(file);
-            }}
-            disabled={isSubmitting}
-          />
-        </label>
-
-        {photoPreview && (
-          <div>
-            <img
-              src={photoPreview}
-              alt="Selected animal"
-              style={{
-                width: 160,
-                height: 120,
-                objectFit: "cover",
-                borderRadius: 10,
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => setPhoto(null)}
-              disabled={isSubmitting}
-            >
-              Remove photo
-            </button>
-          </div>
-        )}
-
-        <h2>Animal location *</h2>
-        <p>
-          Click the map to mark where the animal was seen, or use your
-          current location.
-        </p>
-
-        <button
-          type="button"
-          onClick={handleUseMyLocation}
-          disabled={isLocating || isSubmitting}
-        >
-          {isLocating ? "Finding location..." : "Use my current location"}
-        </button>
-
-        <div style={{ height: 320, margin: "16px 0" }}>
-          <MapContainer
-            center={DEFAULT_CENTER}
-            zoom={13}
-            scrollWheelZoom
-            style={{ height: "100%", width: "100%" }}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <LocationPicker position={position} onSelect={setPosition} />
-            <LocationController currentLocation={currentLocation} />
-          </MapContainer>
+      <div className="new-report-card">
+        <div className="new-report-heading">
+          <h1>Report an animal</h1>
+          <p>Share a few details and mark where the animal was seen.</p>
         </div>
 
-        {position && (
-          <p role="status">
-            Location selected: {position.latitude.toFixed(5)},{" "}
-            {position.longitude.toFixed(5)}
-          </p>
-        )}
+        <form onSubmit={handleSubmit} className="new-report-form">
+          <div className="new-report-details">
+            <label>
+              <span className="new-report-label-text">Report type <span className="new-report-required" aria-hidden="true">*</span></span>
+              <select
+                value={type}
+                className={type === "" ? "new-report-select-placeholder" : ""}
+                required
+                onChange={(event) =>
+                  setType(event.target.value as ReportType | "")
+                }
+              >
+                <option value="" disabled>Select report type</option>
+                <option value="INJURED">Injured</option>
+                <option value="LOST">Lost</option>
+                <option value="FOUND">Found</option>
+                <option value="NEEDS_RESCUE">Needs rescue</option>
+              </select>
+            </label>
 
-        {position && (
+            <label>
+              <span className="new-report-label-text">Animal type</span>
+              <select
+                value={animalType}
+                className={animalType === "" ? "new-report-select-placeholder" : ""}
+                onChange={(event) =>
+                  setAnimalType(event.target.value as AnimalType | "")
+                }
+              >
+                <option value="">Select animal type</option>
+                <option value="DOG">Dog</option>
+                <option value="CAT">Cat</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </label>
+
+            <label className="new-report-full">
+              <span className="new-report-label-text">Report title <span className="new-report-required" aria-hidden="true">*</span></span>
+              <input
+                type="text"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                maxLength={120}
+                placeholder="e.g. Lost cat"
+                required
+              />
+            </label>
+
+            <label className="new-report-full">
+              <span className="new-report-label-text">Description <span className="new-report-required" aria-hidden="true">*</span></span>
+              <textarea
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                maxLength={5000}
+                rows={3}
+                placeholder="What happened? Tell us briefly..."
+                required
+              />
+            </label>
+
+            <div className="new-report-photo-field">
+              <span className="new-report-field-label">Animal photo</span>
+              <div className="new-report-photo-row">
+                <div className="new-report-photo-preview">
+                  {photoPreview ? (
+                    <img src={photoPreview} alt="Selected animal preview" />
+                  ) : (
+                    <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14.5 4h-5L7.7 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.7L14.5 4Z" />
+                      <circle cx="12" cy="13" r="3.5" />
+                    </svg>
+                  )}
+                </div>
+
+                <div className="new-report-photo-actions">
+                  <label
+                    htmlFor="new-report-photo"
+                    className="new-report-photo-button"
+                  >
+                    {photo ? "Change photo" : "Choose a photo"}
+                  </label>
+                  <input
+                    id="new-report-photo"
+                    ref={photoInputRef}
+                    className="new-report-file-input"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    disabled={isSubmitting}
+                    onChange={(event) => {
+                      const file = event.target.files?.[0] ?? null;
+                      if (file && file.size > 5 * 1024 * 1024) {
+                        setFormError("Photo must be 5 MB or smaller.");
+                        clearPhoto();
+                        return;
+                      }
+                      setFormError("");
+                      setPhoto(file);
+                    }}
+                  />
+                  <span className="new-report-photo-hint" title={photo?.name}>
+                    {photo ? photo.name : "JPG, PNG or WebP · Max 5 MB"}
+                  </span>
+                </div>
+
+                {photo && (
+                  <button
+                    type="button"
+                    className="new-report-remove-photo"
+                    onClick={clearPhoto}
+                    disabled={isSubmitting}
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            </div>
+            <label className="new-report-full">
+              <span className="new-report-label-text">Nearby landmark or street</span>
+              <input
+                type="text"
+                value={locationText}
+                onChange={(event) => setLocationText(event.target.value)}
+                maxLength={300}
+                placeholder="e.g. Near the park entrance"
+              />
+            </label>
+          </div>
+
+          <section className="new-report-location" aria-labelledby="report-location-heading">
+            <div className="new-report-location-heading">
+              <h2 id="report-location-heading">Animal location <span className="new-report-required" aria-hidden="true">*</span></h2>
+              <p>Click the map to place or move the marker.</p>
+            </div>
+
             <button
-                type="button"
-                onClick={() => {
-                setPosition(null);
-                setCurrentLocation(null);
-                }}
-                disabled={isSubmitting}
+              type="button"
+              className="new-report-location-button"
+              onClick={handleUseMyLocation}
+              disabled={isLocating || isSubmitting}
             >
-                Clear selected location
+              {isLocating ? "Finding location..." : "⌖ Use my current location"}
             </button>
-        )}
 
-        <label>
-          Location description (optional)
-          <input
-            type="text"
-            value={locationText}
-            onChange={(event) => setLocationText(event.target.value)}
-            maxLength={300}
-            placeholder="e.g. Near the park entrance"
-          />
-        </label>
+            <div className="new-report-map">
+              <MapContainer
+                center={DEFAULT_CENTER}
+                zoom={13}
+                scrollWheelZoom
+                style={{ height: "100%", width: "100%" }}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <LocationPicker position={position} onSelect={setPosition} />
+                <LocationController currentLocation={currentLocation} />
+              </MapContainer>
+            </div>
 
-        {formError && (
-          <p role="alert" style={{ color: "#b42318" }}>
-            {formError}
-          </p>
-        )}
+            {position ? (
+              <div className="new-report-location-selected">
+                <span className="new-report-coordinates" role="status">
+                  ✓ Location selected
+                </span>
+                <button
+                  type="button"
+                  className="new-report-clear-button"
+                  onClick={() => {
+                    setPosition(null);
+                    setCurrentLocation(null);
+                  }}
+                  disabled={isSubmitting}
+                >
+                  Clear location
+                </button>
+              </div>
+            ) : (
+              <p className="new-report-location-hint">Select a point to continue.</p>
+            )}
 
-        <button type="submit" disabled={isSubmitting || isLocating}>
-          {isUploading
-            ? "Uploading photo..."
-            : isSaving
-              ? "Submitting report..."
-              : "Submit report"}
-        </button>
-      </form>
+          </section>
+
+          <div className="new-report-footer">
+            {formError && (
+              <p role="alert" className="new-report-error">{formError}</p>
+            )}
+            <button
+              type="submit"
+              className="new-report-submit"
+              disabled={isSubmitting || isLocating}
+            >
+              {isUploading
+                ? "Uploading photo..."
+                : isSaving
+                  ? "Submitting report..."
+                  : "Submit report →"}
+            </button>
+          </div>
+        </form>
+      </div>
     </main>
   );
 }
