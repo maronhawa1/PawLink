@@ -35,14 +35,6 @@ export default function PublicHeader() {
         <span>PawLink</span>
       </Link>
 
-      {/* Desktop username */}
-      {user && (
-        <div className="public-desktop-user">
-          <span aria-hidden="true">👤</span>
-          <span>{user.name ?? user.email}</span>
-        </div>
-      )}
-
       {/* Mobile menu button */}
       <button
         type="button"
@@ -64,7 +56,6 @@ export default function PublicHeader() {
         {/* Mobile username */}
         {user && (
           <div className="public-mobile-greeting">
-            <span aria-hidden="true">👤</span>
             <span>{user.name ?? user.email}</span>
           </div>
         )}
@@ -149,13 +140,21 @@ export default function PublicHeader() {
       {/* Desktop account actions */}
       <div className="public-actions">
         {user ? (
-          <button
-            type="button"
-            className="login-link logout-button"
-            onClick={handleLogout}
-          >
-            Log out
-          </button>
+          <>
+            <div className="public-desktop-user">
+              <span>{user.name ?? user.email}</span>
+            </div>
+
+            <span className="account-divider" aria-hidden="true">|</span>
+
+            <button
+              type="button"
+              className="login-link logout-button"
+              onClick={handleLogout}
+            >
+              Log out
+            </button>
+          </>
         ) : (
           <>
             <Link className="login-link" to="/login">

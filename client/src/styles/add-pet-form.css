@@ -1,8 +1,4 @@
-/* 
-.add-pet-page {
-  width: min(100% - 40px, 1240px);
-  margin: 36px auto 80px;
-} */
+
 .add-pet-page {
   width: min(100% - 40px, 1240px);
   margin: 24px auto 48px;
@@ -12,32 +8,32 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 22px;
-  color: #425b7c;
-  font-size: 14px;
-  font-weight: 600;
+  color: #238f73;
+  font-size: 15px;
+  font-weight: 750;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .add-pet-back:hover {
-  color: #132d5b;
+  color: #19745d;
   text-decoration: underline;
 }
 
 .add-pet-card {
   display: grid;
   grid-template-columns: minmax(260px, 0.6fr) minmax(0, 1.4fr);
-  border: 1px solid #e6e5ed;
+  border: 1px solid #dce8e4;
   border-radius: 24px;
   overflow: hidden;
-  background: #fffaf8;
+  background: #f4faf7;
   box-shadow: 0 18px 50px rgba(20, 45, 80, 0.11);
 }
 
 .add-pet-visual {
   position: relative;
   min-height: 680px;
-  background: #46516a;
+  background: #e9f5f1;
   overflow: hidden;
 }
 
@@ -48,7 +44,8 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  filter: brightness(0.97) saturate(0.78) contrast(0.92);
+  filter: brightness(1.12) saturate(0.75) contrast(0.9);
+  opacity: 0.93;
 }
 
 .add-pet-visual::after {
@@ -57,10 +54,10 @@
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(12, 27, 50, 0.56),
-    rgba(12, 27, 50, 0.04) 35%,
-    rgba(12, 27, 50, 0.06) 50%,
-    rgba(12, 27, 50, 0.77)
+    rgba(14, 42, 60, 0.25),
+    transparent 35%,
+    transparent 60%,
+    rgba(14, 42, 60, 0.48)
   );
 }
 
@@ -214,10 +211,10 @@
   align-items: center;
   justify-content: center;
   padding: 6px 10px;
-  border: 1px solid #b5c7d8;
+  border: 1px solid #b9d7cd;
   border-radius: 9px;
-  background: #f5f8fc;
-  color: #193961;
+  background: #eef7f2;
+  color: #19745d;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -225,7 +222,7 @@
 }
 
 .add-pet-photo-button:hover {
-  background: #eaf2f9;
+  background: #dcefe7;
 }
 
 .add-pet-file-input {
@@ -273,8 +270,8 @@
   padding: 15px;
   border: none;
   border-radius: 11px;
-  background: #132d5b;
-  color: #fff;
+  background: #238f73;
+  color: #ffffff;
   font: inherit;
   font-size: 15px;
   font-weight: 700;
@@ -283,9 +280,11 @@
 }
 
 .add-pet-submit:hover:not(:disabled) {
-  background: #244779;
+  background: #19745d;
   transform: translateY(-1px);
 }
+
+
 
 .add-pet-submit:disabled {
   opacity: 0.6;
