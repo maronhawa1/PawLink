@@ -7,7 +7,12 @@
 }
 
 .my-pets-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
   margin-bottom: 32px;
+  width: 100%;
 }
 
 .my-pets-heading h1 {
@@ -29,6 +34,7 @@
   justify-content: space-between;
   gap: 16px;
   min-width: 0;
+  width: 100%;
 }
 
 .my-pets-heading-top > :first-child {
@@ -37,6 +43,7 @@
 
 .my-pets-add-button {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   padding: 13px 22px;
@@ -49,7 +56,6 @@
   white-space: nowrap;
   transition: background 160ms ease;
 }
-
 
 .my-pets-add-button:hover {
   background: #19745d;
@@ -165,8 +171,6 @@
   font-weight: 700;
 }
 
-
-
 @media (max-width: 600px) {
   .my-pets-page {
     width: calc(100% - 100px);
@@ -197,5 +201,12 @@
 @media (max-width: 400px) {
   .my-pets-page {
     width: calc(100% - 50px);
+  }
+}
+
+@media (max-width: 640px) {
+  .my-pets-heading-top {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

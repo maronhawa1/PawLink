@@ -61,3 +61,20 @@ export function todayInputValue(): string {
 
   return `${now.getFullYear()}-${month}-${day}`;
 }
+
+export function toInputDate(value: string | null): string {
+  if (!value) {
+    return "";
+  }
+
+  const date = parseApiDate(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${date.getFullYear()}-${month}-${day}`;
+}

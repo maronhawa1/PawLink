@@ -1,9 +1,12 @@
 import { useState, type FormEvent } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   useAddVaccinationMutation,
+  useDeletePetMutation,
   useGetPetQuery,
   useGetVaccinationsQuery,
+  useUpdatePetMutation,
+  type Pet,
   type PetSex,
   type PetSpecies,
   type Vaccination,
@@ -13,6 +16,7 @@ import {
   formatDate,
   getAge,
   parseApiDate,
+  toInputDate,
   todayInputValue,
 } from "../utils/dates";
 import "../styles/pet-passport.css";
@@ -114,8 +118,33 @@ const emptyForm = {
   notes: "",
 };
 
+type EditForm = {
+  name: string;
+  species: PetSpecies;
+  sex: PetSex;
+  breed: string;
+  color: string;
+  birthDate: string;
+  microchipNumber: string;
+  medicalNotes: string;
+};
+
+function toEditForm(pet: Pet): EditForm {
+  return {
+    name: pet.name,
+    species: pet.species,
+    sex: pet.sex,
+    breed: pet.breed ?? "",
+    color: pet.color ?? "",
+    birthDate: toInputDate(pet.birthDate),
+    microchipNumber: pet.microchipNumber ?? "",
+    medicalNotes: pet.medicalNotes ?? "",
+  };
+}
+
 export default function PetPassportPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const petId = Number(id);
   const isValidId = Number.isSafeInteger(petId) && petId > 0;
 
@@ -134,8 +163,77 @@ export default function PetPassportPage() {
   const [addVaccination, { isLoading: isSaving, error: saveError, reset }] =
     useAddVaccinationMutation();
 
+  const [
+    updatePet,
+    { isLoading: isUpdating, error: updateError, reset: resetUpdate },
+  ] = useUpdatePetMutation();
+
+  const [deletePet, { isLoading: isDeleting, error: deleteError }] =
+    useDeletePetMutation();
+
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const [editForm, setEditForm] = useState<EditForm | null>(null);
+
+  function updateEditField(field: keyof EditForm, value: string) {
+    setEditForm((current) => (current ? { ...current, [field]: value } : current));
+  }
+
+  function openEdit() {
+    if (!pet) {
+      return;
+    }
+
+    closeForm();
+    setEditForm(toEditForm(pet));
+  }
+
+  function closeEdit() {
+    setEditForm(null);
+    resetUpdate();
+  }
+
+  async function handleEditSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!editForm) {
+      return;
+    }
+
+    try {
+      await updatePet({
+        id: petId,
+        body: {
+          ...editForm,
+          name: editForm.name.trim(),
+        },
+      }).unwrap();
+      closeEdit();
+    } catch {
+      return;
+    }
+  }
+
+  async function handleDelete() {
+    if (!pet) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Delete ${pet.name}? This also deletes all of its vaccinations.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await deletePet(petId).unwrap();
+      navigate("/my-pets", { replace: true });
+    } catch {
+      return;
+    }
+  }
 
   function updateField(field: keyof typeof emptyForm, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -351,8 +449,15 @@ export default function PetPassportPage() {
         </section>
       </div>
 
-      {!showForm && (
+      {!showForm && !editForm && (
         <div className="passport-actions">
+          <button
+            type="button"
+            className="edit-pet-button"
+            onClick={openEdit}
+          >
+            Edit pet
+          </button>
           <button
             type="button"
             className="add-vaccination-button"
@@ -360,7 +465,140 @@ export default function PetPassportPage() {
           >
             + Add vaccination
           </button>
+          <button
+            type="button"
+            className="delete-pet-button"
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Deleting..." : "Delete pet"}
+          </button>
         </div>
+      )}
+
+      {deleteError && (
+        <p className="passport-message passport-error" role="alert">
+          {getErrorMessage(deleteError, "Unable to delete the pet")}
+        </p>
+      )}
+
+      {editForm && (
+        <form className="vaccination-form" onSubmit={handleEditSubmit}>
+          <h2>Edit {pet.name}</h2>
+
+          <div className="vaccination-form-grid">
+            <label>
+              Name
+              <input
+                value={editForm.name}
+                onChange={(event) => updateEditField("name", event.target.value)}
+                maxLength={60}
+                required
+              />
+            </label>
+
+            <label>
+              Species
+              <select
+                value={editForm.species}
+                onChange={(event) =>
+                  updateEditField("species", event.target.value)
+                }
+              >
+                <option value="DOG">Dog</option>
+                <option value="CAT">Cat</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </label>
+
+            <label>
+              Sex
+              <select
+                value={editForm.sex}
+                onChange={(event) => updateEditField("sex", event.target.value)}
+              >
+                <option value="UNKNOWN">Unknown</option>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+              </select>
+            </label>
+
+            <label>
+              Breed
+              <input
+                value={editForm.breed}
+                onChange={(event) =>
+                  updateEditField("breed", event.target.value)
+                }
+                maxLength={60}
+              />
+            </label>
+
+            <label>
+              Color
+              <input
+                value={editForm.color}
+                onChange={(event) =>
+                  updateEditField("color", event.target.value)
+                }
+                maxLength={40}
+              />
+            </label>
+
+            <label>
+              Birth date
+              <input
+                type="date"
+                value={editForm.birthDate}
+                max={todayInputValue()}
+                onChange={(event) =>
+                  updateEditField("birthDate", event.target.value)
+                }
+              />
+            </label>
+
+            <label>
+              Microchip number
+              <input
+                value={editForm.microchipNumber}
+                onChange={(event) =>
+                  updateEditField("microchipNumber", event.target.value)
+                }
+                inputMode="numeric"
+                pattern="\d{9,15}"
+                title="9 to 15 digits"
+                placeholder="9–15 digits"
+              />
+            </label>
+
+            <label className="vaccination-form-wide">
+              Medical notes
+              <textarea
+                value={editForm.medicalNotes}
+                onChange={(event) =>
+                  updateEditField("medicalNotes", event.target.value)
+                }
+                maxLength={2000}
+                rows={3}
+              />
+            </label>
+          </div>
+
+          {updateError && (
+            <p className="passport-message passport-error" role="alert">
+              {getErrorMessage(updateError, "Unable to save the changes")}
+            </p>
+          )}
+
+          <div className="vaccination-form-actions">
+            <button type="button" className="cancel-button" onClick={closeEdit}>
+              Cancel
+            </button>
+            <button type="submit" className="save-button" disabled={isUpdating}>
+              {isUpdating ? "Saving..." : "Save changes"}
+            </button>
+          </div>
+        </form>
       )}
 
       {showForm && (
