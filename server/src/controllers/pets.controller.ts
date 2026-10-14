@@ -367,7 +367,10 @@ export const updatePet: RequestHandler = async (req, res) => {
       }
     }
 
-    const updated = await db.orm.public.Pet.where({ id: petId }).update({
+    const updated = await db.orm.public.Pet.where({
+      id: petId,
+      ownerId: res.locals.userId,
+    }).update({
       name: data.name,
       species: data.species,
       sex: data.sex,
@@ -404,7 +407,10 @@ export const deletePet: RequestHandler = async (req, res) => {
       return;
     }
 
-    await db.orm.public.Pet.where({ id: petId }).delete();
+    await db.orm.public.Pet.where({
+      id: petId,
+      ownerId: res.locals.userId,
+    }).delete();
 
     res.status(204).end();
   } catch (error) {
