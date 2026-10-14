@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import "../styles/contact.css";
 
 // Change this to the team's real email address.
-const TEAM_EMAIL = "ward@gmail.com";
+const TEAM_EMAIL = "pawlink.team@example.com";
 const REPO_URL = "https://github.com/maronhawa1/PawLink";
 
 type FormValues = {
