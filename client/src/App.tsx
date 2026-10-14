@@ -13,12 +13,15 @@ import DashboardPage from "./pages/DashboardPage";
 import AddPetPage from "./pages/AddPetPage";
 import NewReportPage from "./pages/NewReportPage";
 import MyActivityPage from "./pages/MyActivityPage";
-  import ContactPage from "./pages/ContactPage";
+import ContactPage from "./pages/ContactPage";
+import AboutPage from "./pages/AboutPage";
+
 function App() {
   return (
     <Routes>
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
 
         <Route path="/login" element={<LoginPage />} />
