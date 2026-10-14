@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useGetPetsQuery, type PetSpecies } from "../api/petsApi";
@@ -7,6 +6,12 @@ import { getReports, type AnimalReport } from "../services/reports.service";
 import { useAppSelector } from "../store/hooks";
 import { getAge } from "../utils/dates";
 import "../styles/dashboard.css";
+
+const speciesLabels: Record<PetSpecies, string> = {
+  DOG: "Dog",
+  CAT: "Cat",
+  OTHER: "Other",
+};
 
 const speciesIcons: Record<PetSpecies, string> = {
   DOG: "🐶",
@@ -71,7 +76,10 @@ export default function DashboardPage() {
   }, []);
 
   const recentPets = pets.slice(0, 3);
-  const firstName = user?.name?.trim().split(/\s+/)[0] || "there";
+  const firstWord = user?.name?.trim().split(/\s+/)[0];
+  const firstName = firstWord
+    ? firstWord.charAt(0).toUpperCase() + firstWord.slice(1)
+    : "there";
 
   return (
     <main className="dashboard-page">
@@ -153,7 +161,7 @@ export default function DashboardPage() {
                 <div className="dashboard-pet-details">
                   <h3>{pet.name}</h3>
                   <p>
-                    {pet.species.toLowerCase()}
+                    {speciesLabels[pet.species]}
                     {pet.breed && ` · ${pet.breed}`}
                   </p>
                   {getAge(pet.birthDate) && (
