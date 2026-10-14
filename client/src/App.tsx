@@ -13,33 +13,21 @@ import DashboardPage from "./pages/DashboardPage";
 import AddPetPage from "./pages/AddPetPage";
 import NewReportPage from "./pages/NewReportPage";
 import MyActivityPage from "./pages/MyActivityPage";
-
+  import ContactPage from "./pages/ContactPage";
 function App() {
   return (
     <Routes>
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
-        <Route
-          path="/login"
-          element={<LoginPage />}
-        />
+        <Route path="/login" element={<LoginPage />} />
 
-        <Route
-          path="/reports/map"
-          element={<ReportsMapPage />}
-        />
+        <Route path="/reports/map" element={<ReportsMapPage />} />
 
-        <Route
-          path="/register"
-          element={<RegisterPage />}
-        />
+        <Route path="/register" element={<RegisterPage />} />
 
-        <Route
-          path="/reports/new"
-          element={<NewReportPage />}
-        />
-        
+        <Route path="/reports/new" element={<NewReportPage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
@@ -49,10 +37,7 @@ function App() {
           <Route path="/my-activity" element={<MyActivityPage />} />
         </Route>
 
-        <Route
-          path="/reports/:id"
-          element={<ReportDetailsPage />}
-        />
+        <Route path="/reports/:id" element={<ReportDetailsPage />} />
 
         <Route
           path="*"
