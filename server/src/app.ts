@@ -11,6 +11,8 @@ import helpOffersRoutes from "./routes/help-offers.routes.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 const allowedOrigins = (
   process.env.CLIENT_ORIGINS ?? "http://localhost:5173"
 )
