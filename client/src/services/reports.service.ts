@@ -99,4 +99,27 @@ export async function updateReportStatus(
       await readError(response, "Failed to update the status"),
     );
   }
+
 }
+
+export async function addReportUpdate(
+  id: number,
+  message: string,
+  token: string,
+): Promise<void> {
+  const response = await fetch(`${API_URL}/api/reports/${id}/updates`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ message }),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      await readError(response, "Failed to add the update"),
+    );
+  }
+}
+

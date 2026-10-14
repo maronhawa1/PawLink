@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'370e4b2879ab62360ce0775235ca360f4c0cb598c91a11d0215ca184677ccf77'>;
+  StorageHashBase<'2959002f5c6dbbaa64dffaad28f80ca7e853ae5ea337ba7552168995d32a8ed6'>;
 export type ExecutionHash =
-  ExecutionHashBase<'37baa6adc5692ef1244109b1bdc80ac8dba66cf48a8d47c977b3e9da474242c6'>;
+  ExecutionHashBase<'e70b3268a48b9e91214d52c8c609ea16e7c469ae2cadd60785478839ae592e49'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -242,6 +242,15 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 
 export type FieldOutputTypes = {
   readonly public: {
+    readonly HelpOffer: {
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly status: 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'WITHDRAWN';
+      readonly message: CodecTypes['pg/text@1']['output'] | null;
+      readonly reportId: CodecTypes['pg/int4@1']['output'];
+      readonly volunteerId: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly Pet: {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -306,6 +315,15 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
   readonly public: {
+    readonly HelpOffer: {
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly status: 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'WITHDRAWN';
+      readonly message: CodecTypes['pg/text@1']['input'] | null;
+      readonly reportId: CodecTypes['pg/int4@1']['input'];
+      readonly volunteerId: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly Pet: {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -370,6 +388,15 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
+    readonly helpOffer: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly message: CodecTypes['pg/text@1']['output'] | null;
+      readonly reportId: CodecTypes['pg/int4@1']['output'];
+      readonly status: 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'WITHDRAWN';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly volunteerId: CodecTypes['pg/int4@1']['output'];
+    };
     readonly pet: {
       readonly birthDate: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly breed: CodecTypes['pg/text@1']['output'] | null;
@@ -434,6 +461,15 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
+    readonly helpOffer: {
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly message: CodecTypes['pg/text@1']['input'] | null;
+      readonly reportId: CodecTypes['pg/int4@1']['input'];
+      readonly status: 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'WITHDRAWN';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly volunteerId: CodecTypes['pg/int4@1']['input'];
+    };
     readonly pet: {
       readonly birthDate: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly breed: CodecTypes['pg/text@1']['input'] | null;
@@ -506,11 +542,13 @@ export namespace Models {
     name: CodecTypes['pg/text@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    helpOffers: public_HelpOffer[];
     pets: public_Pet[];
     reportUpdates: public_ReportUpdate[];
     reportsCreated: public_Report[];
     reportsHandled: public_Report[];
-    readonly [RelationKeys]?: 'pets' | 'reportUpdates' | 'reportsCreated' | 'reportsHandled';
+    readonly [RelationKeys]?:
+      'helpOffers' | 'pets' | 'reportUpdates' | 'reportsCreated' | 'reportsHandled';
   };
   export type public_Pet = {
     id: CodecTypes['pg/int4@1']['output'];
@@ -560,9 +598,10 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     assignedTo: public_User | null;
+    helpOffers: public_HelpOffer[];
     reporter: public_User;
     updates: public_ReportUpdate[];
-    readonly [RelationKeys]?: 'assignedTo' | 'reporter' | 'updates';
+    readonly [RelationKeys]?: 'assignedTo' | 'helpOffers' | 'reporter' | 'updates';
   };
   export type public_ReportUpdate = {
     id: CodecTypes['pg/int4@1']['output'];
@@ -575,6 +614,18 @@ export namespace Models {
     report: public_Report;
     readonly [RelationKeys]?: 'author' | 'report';
   };
+  export type public_HelpOffer = {
+    id: CodecTypes['pg/int4@1']['output'];
+    status: 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'WITHDRAWN';
+    message: CodecTypes['pg/text@1']['output'] | null;
+    reportId: CodecTypes['pg/int4@1']['output'];
+    volunteerId: CodecTypes['pg/int4@1']['output'];
+    createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    report: public_Report;
+    volunteer: public_User;
+    readonly [RelationKeys]?: 'report' | 'volunteer';
+  };
 }
 
 export declare const models: {
@@ -584,6 +635,7 @@ export declare const models: {
     Vaccination: Models.public_Vaccination;
     Report: Models.public_Report;
     ReportUpdate: Models.public_ReportUpdate;
+    HelpOffer: Models.public_HelpOffer;
   };
 };
 
@@ -605,6 +657,102 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly helpOffer: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                  };
+                };
+                readonly message: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly reportId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly volunteerId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['reportId', 'volunteerId'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'helpOffer_volunteerId_idx_b41cb3e4';
+                  readonly prefix: 'helpOffer_volunteerId_idx';
+                  readonly columns: readonly ['volunteerId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'helpOffer_reportId_status_idx_79d493b7';
+                  readonly prefix: 'helpOffer_reportId_status_idx';
+                  readonly columns: readonly ['reportId', 'status'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'helpOffer_reportId_idx_d163019e';
+                  readonly prefix: 'helpOffer_reportId_idx';
+                  readonly columns: readonly ['reportId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'helpOffer';
+                    readonly columns: readonly ['reportId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'report';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'helpOffer';
+                    readonly columns: readonly ['volunteerId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'user';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly pet: {
               columns: {
                 readonly id: {
@@ -1055,6 +1203,10 @@ type ContractBase = Omit<
             };
           };
           readonly valueSet: {
+            readonly HelpOfferStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'ACCEPTED', 'DECLINED', 'WITHDRAWN'];
+            };
             readonly PetSex: {
               readonly kind: 'valueSet';
               readonly values: readonly ['MALE', 'FEMALE', 'UNKNOWN'];
@@ -1093,11 +1245,86 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'ReportUpdate';
     };
+    readonly helpOffer: { readonly namespace: 'public' & NamespaceId; readonly model: 'HelpOffer' };
   };
   readonly domain: {
     readonly namespaces: {
       readonly public: {
         readonly models: {
+          readonly HelpOffer: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly message: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly reportId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly volunteerId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly report: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Report';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['reportId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly volunteer: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['volunteerId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'helpOffer';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly status: { readonly column: 'status' };
+                readonly message: { readonly column: 'message' };
+                readonly reportId: { readonly column: 'reportId' };
+                readonly volunteerId: { readonly column: 'volunteerId' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly Pet: {
             readonly fields: {
               readonly id: {
@@ -1279,6 +1506,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
+              readonly helpOffers: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'HelpOffer';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['reportId'];
+                };
+              };
               readonly reporter: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
                 readonly cardinality: 'N:1';
@@ -1425,6 +1663,17 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly helpOffers: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'HelpOffer';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['volunteerId'];
+                };
+              };
               readonly pets: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Pet' };
                 readonly cardinality: '1:N';
@@ -1600,6 +1849,15 @@ type ContractBase = Omit<
               { readonly name: 'CLOSED'; readonly value: 'CLOSED' },
             ];
           };
+          readonly HelpOfferStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'ACCEPTED'; readonly value: 'ACCEPTED' },
+              { readonly name: 'DECLINED'; readonly value: 'DECLINED' },
+              { readonly name: 'WITHDRAWN'; readonly value: 'WITHDRAWN' },
+            ];
+          };
         };
       };
     };
@@ -1627,6 +1885,15 @@ type ContractBase = Omit<
     readonly executionHash: ExecutionHash;
     readonly mutations: {
       readonly defaults: readonly [
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'helpOffer';
+            readonly column: 'updatedAt';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
+          readonly onUpdate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
+        },
         {
           readonly ref: {
             readonly namespace: 'public';

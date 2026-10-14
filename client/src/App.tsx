@@ -11,6 +11,8 @@ import ReportsMapPage from "./pages/ReportsMapPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import AddPetPage from "./pages/AddPetPage";
+import NewReportPage from "./pages/NewReportPage";
+import MyActivityPage from "./pages/MyActivityPage";
 
 function App() {
   return (
@@ -35,19 +37,16 @@ function App() {
 
         <Route
           path="/reports/new"
-          element={
-            <ComingSoonPage
-              title="Report an animal"
-              description="The animal report form is currently being prepared."
-            />
-          }
+          element={<NewReportPage />}
         />
+        
 
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/my-pets" element={<MyPetsPage />} />
           <Route path="/my-pets/:id" element={<PetPassportPage />} />
           <Route path="/my-pets/new" element={<AddPetPage />} />
+          <Route path="/my-activity" element={<MyActivityPage />} />
         </Route>
 
         <Route
