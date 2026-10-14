@@ -160,41 +160,39 @@
   }
 
   .login-visual {
-    min-height: 100vh;
-    background-color: #edf7f3;
-    background-image:
+    min-height: 280px;
+    padding: 32px 20px;
+    background:
       linear-gradient(
-        180deg,
-        rgba(247, 252, 250, 0.96) 0%,
-        rgba(247, 252, 250, 0.7) 42%,
-        rgba(247, 252, 250, 0.08) 72%
+        90deg,
+        rgba(247, 252, 250, 0.95) 0%,
+        rgba(247, 252, 250, 0.75) 45%,
+        rgba(247, 252, 250, 0.1) 100%
       ),
-      url("../assets/images/login-hero.webp");
-    background-repeat: no-repeat;
-    background-position:
-      center,
-      right bottom;
-    background-size:
-      100% 100%,
-      auto 67%;
+      url("../assets/images/login-hero.webp") 70% 35% / cover no-repeat;
+  }
+
+  .login-visual::after {
+    display: none;
   }
 
   .login-visual-copy {
-    max-width: 430px;
-    margin-top: 80px;
+    max-width: 260px;
+    margin: 0;
   }
 
   .login-visual-copy h1 {
-    font-size: clamp(36px, 5vw, 52px);
+    margin-bottom: 12px;
+    font-size: clamp(32px, 8vw, 40px);
   }
 
   .login-visual-copy p {
-    max-width: 360px;
-    font-size: 17px;
+    max-width: 220px;
+    font-size: 16px;
   }
 
   .login-content {
-    padding: 32px 20px;
+    padding: 24px 20px 40px;
   }
 
   .login-card {
