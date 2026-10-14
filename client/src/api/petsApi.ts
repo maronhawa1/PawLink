@@ -120,7 +120,11 @@ export const petsApi = baseApi.injectEndpoints({
         url: `/pets/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "Pets", id: "LIST" }],
+      invalidatesTags: (_result, _error, id) => [
+        { type: "Pets", id: "LIST" },
+        { type: "Pets", id },
+        { type: "Vaccinations", id },
+      ],
     }),
     getVaccinations: builder.query<Vaccination[], number>({
       query: (petId) => `/pets/${petId}/vaccinations`,
