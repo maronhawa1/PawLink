@@ -15,6 +15,7 @@ import NewReportPage from "./pages/NewReportPage";
 import MyActivityPage from "./pages/MyActivityPage";
 import ContactPage from "./pages/ContactPage";
 import AboutPage from "./pages/AboutPage";
+import PrivacyPage from "./pages/PrivacyPage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
 
         <Route path="/login" element={<LoginPage />} />
 
