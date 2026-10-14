@@ -109,10 +109,23 @@ export const addReportUpdate: RequestHandler = async (req, res) => {
       return;
     }
 
-    if (row.reporterId !== userId && row.assignedToId !== userId) {
+      const acceptedOffer = await pool.query(
+      `SELECT 1
+      FROM public."helpOffer"
+      WHERE "reportId" = $1
+        AND "volunteerId" = $2
+        AND "status" = 'ACCEPTED'
+      LIMIT 1`,
+      [reportId, userId],
+    );
+
+    const isReporter = row.reporterId === userId;
+    const isHelper = (acceptedOffer.rowCount ?? 0) > 0;
+
+    if (!isReporter && !isHelper) {
       res.status(403).json({
         message:
-          "Only the reporter or the assigned helper can add progress updates",
+          "Only the reporter or an accepted volunteer can add progress updates",
       });
       return;
     }

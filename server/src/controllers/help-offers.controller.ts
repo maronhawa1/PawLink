@@ -30,17 +30,21 @@ export const createHelpOffer: RequestHandler = async (req, res) => {
   }
 
   try {
-    const result = await pool.query(
+        const result = await pool.query(
       `INSERT INTO public."helpOffer"
         ("reportId", "volunteerId", "message", "updatedAt")
-       SELECT r."id", $2, $3, NOW()
-       FROM public."report" r
-       WHERE r."id" = $1
-         AND r."reporterId" <> $2
-         AND r."status" = 'OPEN'
-         AND r."assignedToId" IS NULL
-       ON CONFLICT ("reportId", "volunteerId") DO NOTHING
-       RETURNING *`,
+      SELECT r."id", $2, $3, NOW()
+      FROM public."report" r
+      WHERE r."id" = $1
+        AND r."reporterId" <> $2
+        AND r."status" IN ('OPEN', 'IN_PROGRESS')
+      ON CONFLICT ("reportId", "volunteerId")
+      DO UPDATE SET
+        "status" = 'PENDING',
+        "message" = EXCLUDED."message",
+        "updatedAt" = NOW()
+      WHERE "helpOffer"."status" = 'WITHDRAWN'
+      RETURNING *`,
       [reportId, userId, parsed.data.message],
     );
 
@@ -189,8 +193,8 @@ export const respondToHelpOffer: RequestHandler = async (req, res) => {
     }
 
     if (
-      parsed.data.status === "ACCEPTED" &&
-      (report.status !== "OPEN" || report.assignedToId !== null)
+    parsed.data.status === "ACCEPTED" &&
+    !["OPEN", "IN_PROGRESS"].includes(report.status)
     ) {
       await client.query("ROLLBACK");
       res.status(409).json({ message: "This report cannot accept a helper" });
@@ -204,31 +208,21 @@ export const respondToHelpOffer: RequestHandler = async (req, res) => {
       [parsed.data.status, offerId],
     );
 
-    if (parsed.data.status === "ACCEPTED") {
-      await client.query(
-        `UPDATE public."report"
-         SET "assignedToId" = $1,
-             "status" = 'IN_PROGRESS',
-             "updatedAt" = NOW()
-         WHERE "id" = $2`,
-        [offer.volunteerId, reportId],
-      );
+    if (parsed.data.status === "ACCEPTED" && report.status === "OPEN") {
+        await client.query(
+            `UPDATE public."report"
+            SET "status" = 'IN_PROGRESS',
+                "updatedAt" = NOW()
+            WHERE "id" = $1`,
+            [reportId],
+        );
 
-      await client.query(
-        `INSERT INTO public."reportUpdate"
-         ("reportId", "authorId", "status", "message")
-         VALUES ($1, $2, 'IN_PROGRESS', $3)`,
-        [reportId, userId, "A volunteer's offer was accepted"],
-      );
-
-      await client.query(
-        `UPDATE public."helpOffer"
-         SET "status" = 'DECLINED', "updatedAt" = NOW()
-         WHERE "reportId" = $1
-           AND "id" <> $2
-           AND "status" = 'PENDING'`,
-        [reportId, offerId],
-      );
+        await client.query(
+            `INSERT INTO public."reportUpdate"
+            ("reportId", "authorId", "status", "message")
+            VALUES ($1, $2, 'IN_PROGRESS', $3)`,
+            [reportId, userId, "Help started- first volunteer offer was accepted"],
+        );
     }
 
     await client.query("COMMIT");

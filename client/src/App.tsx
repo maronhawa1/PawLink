@@ -12,6 +12,7 @@ import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import AddPetPage from "./pages/AddPetPage";
 import NewReportPage from "./pages/NewReportPage";
+import MyActivityPage from "./pages/MyActivityPage";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="/my-pets" element={<MyPetsPage />} />
           <Route path="/my-pets/:id" element={<PetPassportPage />} />
           <Route path="/my-pets/new" element={<AddPetPage />} />
+          <Route path="/my-activity" element={<MyActivityPage />} />
         </Route>
 
         <Route

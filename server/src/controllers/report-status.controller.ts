@@ -15,12 +15,11 @@ const allowedTransitions: Record<ReportStatus, ReportStatus[]> = {
   OPEN: ["IN_PROGRESS", "RESOLVED", "CLOSED"],
   IN_PROGRESS: ["OPEN", "RESOLVED", "CLOSED"],
   RESOLVED: ["OPEN"],
-  CLOSED: ["OPEN"],
+  CLOSED: [],
 };
 
 const helperTransitions: Partial<Record<ReportStatus, ReportStatus[]>> = {
   OPEN: ["IN_PROGRESS"],
-  IN_PROGRESS: ["OPEN"],
 };
 
 const updateStatusSchema = z.object({
@@ -160,12 +159,24 @@ export const updateReportStatus: RequestHandler = async (req, res) => {
 
     const currentStatus = report.status as ReportStatus;
     const isReporter = report.reporterId === userId;
-    const isHelper = report.assignedToId === userId;
+
+    const acceptedOffer = await client.query(
+      `SELECT 1
+      FROM public."helpOffer"
+      WHERE "reportId" = $1
+        AND "volunteerId" = $2
+        AND "status" = 'ACCEPTED'
+      LIMIT 1`,
+      [reportId, userId],
+    );
+
+    const isHelper = acceptedOffer.rowCount !== null &&
+      acceptedOffer.rowCount > 0;
 
     if (!isReporter && !isHelper) {
       await client.query("ROLLBACK");
       res.status(403).json({
-        message: "Only the reporter or assigned helper can update this report",
+        message: "Only the reporter or an accepted volunteer can update this report",
       });
       return;
     }

@@ -113,6 +113,19 @@ export default function PublicHeader() {
           </NavLink>
         )}
 
+        {user && (
+          <NavLink
+            to="/my-activity"
+            onClick={closeMenu}
+            className={({ isActive }) =>
+              isActive ? "active" : undefined
+            }
+          >
+            My Activity
+          </NavLink>
+        )}
+
+
         {/* Mobile account actions */}
         <div className="public-mobile-account">
           {user ? (
