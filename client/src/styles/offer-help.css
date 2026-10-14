@@ -1,0 +1,198 @@
+
+.offer-help-trigger {
+  border: none;
+  border-radius: 10px;
+  padding: 11px 20px;
+  background: #397d65;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.offer-help-trigger:hover {
+  background: #2c6551;
+}
+
+.offer-help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(20, 35, 30, 0.48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.offer-help-modal {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.18);
+  color: #26372f;
+}
+
+.offer-help-modal h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+.offer-help-description {
+  margin: 0 0 22px;
+  font-size: 14px;
+  color: #64746b;
+}
+
+.offer-help-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  border: none;
+  background: transparent;
+  color: #65756b;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.offer-help-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.offer-help-modal label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.offer-help-modal textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d3ded7;
+  border-radius: 10px;
+  resize: vertical;
+  font: inherit;
+  font-size: 14px;
+}
+
+.offer-help-modal textarea:focus {
+  outline: 2px solid #397d65;
+  outline-offset: 1px;
+}
+
+.offer-help-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.offer-help-actions button {
+  padding: 10px 16px;
+  border-radius: 9px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.offer-help-cancel {
+  border: 1px solid #d3ded7;
+  background: white;
+  color: #344b3f;
+}
+
+.offer-help-submit {
+  border: none;
+  background: #397d65;
+  color: white;
+}
+
+.offer-help-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.offer-help-error {
+  margin: 0;
+  font-size: 13px;
+  color: #b42318;
+}
+
+.offer-help-success {
+  color: #397d65;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Offer status in Report Details */
+.offer-help-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.offer-help-status-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff3dc;
+  color: #a05f00;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.offer-help-status-label.accepted {
+  background: #e1f5ee;
+  color: #147557;
+}
+
+.offer-help-status-label.declined {
+  background: #fde8e8;
+  color: #b4232c;
+}
+
+.offer-help-volunteer {
+  margin: 0;
+  color: #147557;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.offer-help-withdraw {
+  padding: 9px 14px;
+  border: 1px solid #c9d8d3;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #397d65;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.offer-help-withdraw:hover:not(:disabled) {
+  background: #f0f8f5;
+  border-color: #397d65;
+}
+
+.offer-help-withdraw:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .offer-help-modal {
+    padding: 22px;
+  }
+}

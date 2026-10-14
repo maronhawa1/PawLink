@@ -29,6 +29,17 @@ export type NewPet = {
   medicalNotes?: string;
 };
 
+export type PetUpdate = {
+  name?: string;
+  species?: PetSpecies;
+  sex?: PetSex;
+  breed?: string;
+  color?: string;
+  birthDate?: string;
+  microchipNumber?: string;
+  medicalNotes?: string;
+};
+
 export type Vaccination = {
   id: number;
   name: string;
@@ -48,17 +59,38 @@ export type NewVaccination = {
   notes?: string;
 };
 
+function capitalizeName(pet: Pet): Pet {
+  return {
+    ...pet,
+    name: pet.name.charAt(0).toUpperCase() + pet.name.slice(1),
+  };
+}
+
 export const petsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getPets: builder.query<Pet[], void>({
       query: () => "/pets",
-      transformResponse: (response: { pets: Pet[] }) => response.pets,
-      providesTags: ["Pets"],
+      transformResponse: (response: { pets: Pet[] }) =>
+        response.pets.map(capitalizeName),
+      providesTags: [{ type: "Pets", id: "LIST" }],
     }),
     getPet: builder.query<Pet, number>({
       query: (id) => `/pets/${id}`,
-      transformResponse: (response: { pet: Pet }) => response.pet,
+      transformResponse: (response: { pet: Pet }) =>
+        capitalizeName(response.pet),
       providesTags: (_result, _error, id) => [{ type: "Pets", id }],
+    }),
+    uploadPetImage: builder.mutation<{ url: string }, File>({
+      query: (file) => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        return {
+          url: "/uploads/pets",
+          method: "POST",
+          body: formData,
+        };
+      },
     }),
     addPet: builder.mutation<Pet, NewPet>({
       query: (body) => ({
@@ -66,8 +98,29 @@ export const petsApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      transformResponse: (response: { pet: Pet }) => response.pet,
-      invalidatesTags: ["Pets"],
+      transformResponse: (response: { pet: Pet }) =>
+        capitalizeName(response.pet),
+      invalidatesTags: [{ type: "Pets", id: "LIST" }],
+    }),
+    updatePet: builder.mutation<Pet, { id: number; body: PetUpdate }>({
+      query: ({ id, body }) => ({
+        url: `/pets/${id}`,
+        method: "PATCH",
+        body,
+      }),
+      transformResponse: (response: { pet: Pet }) =>
+        capitalizeName(response.pet),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "Pets", id: "LIST" },
+        { type: "Pets", id },
+      ],
+    }),
+    deletePet: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/pets/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "Pets", id: "LIST" }],
     }),
     getVaccinations: builder.query<Vaccination[], number>({
       query: (petId) => `/pets/${petId}/vaccinations`,
@@ -98,7 +151,10 @@ export const petsApi = baseApi.injectEndpoints({
 export const {
   useGetPetsQuery,
   useGetPetQuery,
+  useUploadPetImageMutation,
   useAddPetMutation,
+  useUpdatePetMutation,
+  useDeletePetMutation,
   useGetVaccinationsQuery,
   useAddVaccinationMutation,
 } = petsApi;

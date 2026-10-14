@@ -1,0 +1,105 @@
+
+/* Help Offers component */
+.help-offers-card {
+  padding: 14px 16px;
+  border: 1px solid #d7e6e1;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.help-offers-card h2 {
+  margin: 0 0 10px;
+  color: #0e2a5a;
+  font-size: 1.05rem;
+}
+
+/* Individual volunteer offers */
+.help-offer-item {
+  padding: 10px 12px;
+  margin-top: 8px;
+  border: 1px solid #e0eae5;
+  border-radius: 12px;
+  background: #fbfdfc;
+}
+
+.help-offer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.help-offer-header strong {
+  color: #0e2a5a;
+  font-size: 0.95rem;
+}
+
+.help-offer-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.help-offer-accepted {
+  background: #e1f5ee;
+  color: #147557;
+}
+
+.help-offer-pending {
+  background: #fff3dc;
+  color: #a05f00;
+}
+
+.help-offer-declined {
+  background: #fce8e8;
+  color: #b33232;
+}
+
+.help-offer-item p {
+  margin: 8px 0 0;
+  color: #4d6283;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* Accept / Decline buttons */
+.help-offer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.help-offer-actions button {
+  min-height: 36px;
+  padding: 8px 16px;
+  border: 1px solid #238f73;
+  border-radius: 9px;
+  background: #238f73;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.help-offer-actions button + button {
+  background: #ffffff;
+  color: #238f73;
+}
+
+.help-offer-actions button:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.help-offer-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

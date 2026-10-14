@@ -1,0 +1,397 @@
+
+.my-activity-page {
+  width: min(1050px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 40px 0 72px;
+  color: #0e2a5a;
+}
+
+/* Page heading */
+.my-activity-header {
+  margin-bottom: 28px;
+}
+
+.my-activity-header h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.8rem, 3vw, 2.25rem);
+  letter-spacing: -0.035em;
+}
+
+.my-activity-header p {
+  margin: 0;
+  color: #637595;
+  line-height: 1.6;
+}
+
+/* Tabs */
+.my-activity-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  margin-bottom: 28px;
+  border-radius: 16px;
+  background: #edf4f1;
+}
+
+.my-activity-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex: 1;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #637595;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.my-activity-tabs button:hover {
+  color: #0e2a5a;
+}
+
+.my-activity-tabs button.active {
+  background: #ffffff;
+  color: #238f73;
+  box-shadow: 0 3px 12px rgba(14, 42, 90, 0.08);
+}
+
+.my-activity-tab-count {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #dcebe5;
+  color: #238f73;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.my-activity-tabs button.active .my-activity-tab-count {
+  background: #e5f5ef;
+}
+
+/* Section heading and filter */
+.my-activity-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.my-activity-section-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.my-activity-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #637595;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.my-activity-filter select {
+  min-width: 160px;
+  padding: 10px 14px;
+  border: 1px solid #d7e6e1;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #0e2a5a;
+  font: inherit;
+  cursor: pointer;
+}
+
+.my-activity-filter select:focus-visible {
+  outline: 2px solid #238f73;
+  outline-offset: 2px;
+}
+
+/* Compact report list */
+.my-activity-list {
+  display: grid;
+  gap: 12px;
+}
+
+.my-activity-item {
+  overflow: hidden;
+  border: 1px solid #d7e6e1;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(14, 42, 90, 0.045);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.my-activity-item:hover {
+  border-color: #b9d8cd;
+}
+
+.my-activity-item[open] {
+  border-color: #a8d1c2;
+  box-shadow: 0 12px 30px rgba(14, 42, 90, 0.07);
+}
+
+.my-activity-summary {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 22px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.my-activity-summary::-webkit-details-marker {
+  display: none;
+}
+
+.my-activity-summary::marker {
+  content: "";
+}
+
+.my-activity-summary:focus-visible {
+  outline: 2px solid #238f73;
+  outline-offset: -3px;
+}
+
+/* Animal thumbnail */
+.my-activity-thumbnail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 74px;
+  width: 74px;
+  height: 74px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #edf4f1;
+  color: #238f73;
+}
+
+.my-activity-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.my-activity-thumbnail span {
+  font-size: 2rem;
+}
+
+/* Row information */
+.my-activity-summary-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+}
+
+.my-activity-summary-info h3 {
+  max-width: 100%;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.my-activity-summary-info .status-badge {
+  padding: 5px 10px;
+}
+
+.my-activity-chevron {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: #637595;
+  font-size: 1.35rem;
+  transition: transform 0.2s;
+}
+
+.my-activity-summary > .status-badge,
+.my-activity-summary > .my-activity-offer-status {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.my-activity-chevron {
+  margin-left: 8px;
+}
+
+@media (max-width: 600px) {
+  .my-activity-summary > .status-badge,
+  .my-activity-summary > .my-activity-offer-status {
+    font-size: 0.65rem;
+    padding: 5px 7px;
+  }
+}
+
+.my-activity-item[open] .my-activity-chevron {
+  transform: rotate(180deg);
+}
+
+/* Expanded details */
+.my-activity-expanded {
+  padding: 16px 22px 20px;
+  border-top: 1px solid #e3ece8;
+  background: #fbfdfc;
+}
+
+.my-activity-report-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.my-activity-description {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: #4d6283;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.my-activity-view-link {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 7px 0;
+  color: #238f73;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.my-activity-view-link:hover {
+  text-decoration: underline;
+}
+
+/* Incoming help offers inside expanded reports */
+.my-activity-offers-section {
+  margin-top: 14px;
+}
+
+
+/* Offer status badges */
+.my-activity-offer-status {
+  display: inline-flex;
+  width: fit-content;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.my-activity-offer-pending {
+  background: #fff3dc;
+  color: #a05f00;
+}
+
+.my-activity-offer-accepted {
+  background: #e1f5ee;
+  color: #147557;
+}
+
+.my-activity-offer-declined {
+  background: #fce8e8;
+  color: #b33232;
+}
+
+.my-activity-offer-withdrawn {
+  background: #eceff3;
+  color: #4d5b70;
+}
+
+/* Volunteer offer actions */
+.my-activity-offer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.my-activity-offer-actions button {
+  padding: 7px 14px;
+  border: 1px solid #238f73;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #238f73;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.my-activity-offer-actions button:hover:not(:disabled) {
+  border-color: #238f73;
+  color: #238f73;
+  background: #f0f8f5;
+}
+
+.my-activity-offer-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .my-activity-page {
+    padding-top: 28px;
+  }
+
+  .my-activity-tabs button {
+    padding: 10px 8px;
+    font-size: 0.88rem;
+  }
+
+  .my-activity-summary {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .my-activity-thumbnail {
+    flex-basis: 60px;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+  }
+
+  .my-activity-summary-info h3 {
+    font-size: 0.98rem;
+  }
+
+  .my-activity-expanded {
+    padding: 16px;
+  }
+
+  .my-activity-filter {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .my-activity-filter select {
+    flex: 1;
+    max-width: 220px;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .my-activity-report-preview {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

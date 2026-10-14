@@ -22,8 +22,15 @@ export default function MyPetsPage() {
   return (
     <main className="my-pets-page">
       <section className="my-pets-heading">
-        <h1>My pets</h1>
-        <p>Keep your pets' details and passports in one place.</p>
+        <div className="my-pets-heading-top">
+          <div>
+            <h1>My pets</h1>
+            <p>Keep your pets' details and passports in one place.</p>
+          </div>
+          <Link to="/my-pets/new" className="my-pets-add-button">
+            + Add Pet
+          </Link>
+        </div>
       </section>
 
       {isLoading && <p className="pets-message">Loading your pets...</p>}

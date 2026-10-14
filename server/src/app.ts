@@ -6,6 +6,8 @@ import reportUpdatesRoutes from "./routes/report-updates.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import petsRoutes from "./routes/pets.routes.js";
 import reportsRoutes from "./routes/reports.routes.js";
+import reportStatusRoutes from "./routes/report-status.routes.js";
+import helpOffersRoutes from "./routes/help-offers.routes.js";
 
 const app = express();
 
@@ -42,6 +44,10 @@ app.use("/api/uploads", uploadsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/reports", reportUpdatesRoutes);
 app.use("/api/pets", petsRoutes);
+
 app.use("/api/reports", reportsRoutes);
+app.use("/api/reports", helpOffersRoutes);
+// Registered after reportsRoutes so "/api/reports/mine" keeps working.
+app.use("/api/reports", reportStatusRoutes);
 
 export default app;

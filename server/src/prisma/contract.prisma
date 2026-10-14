@@ -26,6 +26,13 @@ enum ReportStatus {
   CLOSED
 }
 
+enum HelpOfferStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+}
+
 model User {
   id           Int            @id @default(autoincrement())
   email        String         @unique
@@ -37,6 +44,7 @@ model User {
   reportsCreated Report[]       @relation("ReportCreator")
   reportsHandled Report[]       @relation("ReportHandler")
   reportUpdates ReportUpdate[]
+  helpOffers HelpOffer[]
 
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
@@ -112,6 +120,7 @@ model Report {
   )
 
   updates ReportUpdate[]
+  helpOffers HelpOffer[]
 
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
@@ -144,4 +153,31 @@ model ReportUpdate {
 
   @@index([reportId])
   @@index([authorId])
+}
+
+model HelpOffer {
+  id      Int             @id @default(autoincrement())
+  status  HelpOfferStatus @default(PENDING)
+  message String?
+
+  reportId Int
+  report   Report @relation(
+    fields: [reportId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  volunteerId Int
+  volunteer   User @relation(
+    fields: [volunteerId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+
+  @@unique([reportId, volunteerId])
+  @@index([volunteerId])
+  @@index([reportId, status])
 }

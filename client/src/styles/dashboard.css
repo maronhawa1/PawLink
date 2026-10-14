@@ -1,0 +1,366 @@
+.dashboard-page {
+  width: min(1200px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 40px 0 72px;
+  color: #0e2a5a;
+}
+
+/* Welcome section */
+
+.dashboard-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  min-height: 330px;
+  border-radius: 24px;
+  background: #e9f5f1;
+}
+
+.dashboard-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px;
+}
+
+.dashboard-eyebrow {
+  margin-bottom: 12px;
+  color: #238f73;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dashboard-hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.dashboard-hero p {
+  max-width: 480px;
+  margin: 18px 0 24px;
+  color: #4e6587;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.dashboard-hero-image {
+  min-height: 280px;
+  background-image:
+    linear-gradient(rgba(233, 245, 241, 0.18), rgba(233, 245, 241, 0.18)),
+    linear-gradient(
+      to right,
+      #e9f5f1 0%,
+      rgba(233, 245, 241, 0.95) 10%,
+      rgba(233, 245, 241, 0.65) 25%,
+      rgba(233, 245, 241, 0.25) 35%,
+      transparent 45%
+    ),
+    url("../assets/images/dashboard-header2.jpg");
+
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.dashboard-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.dashboard-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 22px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    background 160ms ease;
+}
+
+.dashboard-button:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-button.primary {
+  background: #238f73;
+  color: #ffffff;
+}
+
+.dashboard-button.primary:hover {
+  background: #1b765e;
+}
+
+.dashboard-button.secondary {
+  border: 1px solid #238f73;
+  background: #ffffff;
+  color: #238f73;
+}
+
+/* Shared section styling */
+
+.dashboard-section {
+  margin-top: 48px;
+}
+
+.dashboard-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.dashboard-section-heading h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.02em;
+}
+
+.dashboard-section-heading p {
+  margin: 8px 0 0;
+  color: #637595;
+}
+
+.dashboard-text-link {
+  flex-shrink: 0;
+  color: #238f73;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dashboard-text-link:hover {
+  text-decoration: underline;
+}
+
+/* Pet cards */
+
+.dashboard-pets-grid,
+.dashboard-reports-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.dashboard-pet-card,
+.dashboard-report-card {
+  overflow: hidden;
+  border: 1px solid #dce8e4;
+  border-radius: 18px;
+  background: #ffffff;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 10px 26px rgba(14, 42, 90, 0.05);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.dashboard-pet-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 34px rgba(14, 42, 90, 0.1);
+}
+
+.dashboard-pet-photo,
+.dashboard-report-photo {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  height: 190px;
+  place-items: center;
+  background: #e9f5f1;
+}
+
+.dashboard-pet-photo img,
+.dashboard-report-photo img {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dashboard-pet-photo span,
+.dashboard-report-photo span {
+  font-size: 4rem;
+}
+
+.dashboard-pet-details,
+.dashboard-report-details {
+  padding: 20px;
+}
+
+.dashboard-pet-details h3,
+.dashboard-report-details h3 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+}
+
+.dashboard-pet-details p,
+.dashboard-report-details p {
+  margin: 0 0 8px;
+  color: #637595;
+  line-height: 1.5;
+}
+
+.dashboard-pet-details > span {
+  display: inline-block;
+  margin-top: 12px;
+  color: #238f73;
+  font-weight: 700;
+}
+
+/* Report cards */
+
+.dashboard-report-type {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: #238f73;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.dashboard-report-status {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #e9f5f1;
+  color: #238f73;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+/* Loading, errors and empty states */
+
+.dashboard-message,
+.dashboard-empty {
+  padding: 32px;
+  border-radius: 18px;
+  background: #ffffff;
+  color: #637595;
+}
+
+.dashboard-error {
+  background: #fdeeee;
+  color: #b42318;
+}
+
+.dashboard-empty {
+  border: 2px dashed #cfe0da;
+  text-align: center;
+}
+
+.dashboard-empty > span {
+  font-size: 3rem;
+}
+
+.dashboard-empty h3 {
+  margin: 12px 0 8px;
+  color: #0e2a5a;
+}
+
+.dashboard-empty p {
+  margin: 0 0 16px;
+}
+
+.dashboard-empty a {
+  color: #238f73;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Rescue map banner */
+
+.dashboard-rescue-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-top: 48px;
+  padding: 36px 40px;
+  border-radius: 20px;
+  background: #e9f5f1;
+}
+
+.dashboard-rescue-banner h2 {
+  margin: 0 0 10px;
+  font-size: 1.6rem;
+}
+
+.dashboard-rescue-banner p {
+  max-width: 600px;
+  margin: 0;
+  color: #637595;
+  line-height: 1.6;
+}
+
+/* Responsive layout */
+
+@media (max-width: 900px) {
+  .dashboard-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-hero-image {
+    order: 1;
+    min-height: 220px;
+    background-image: url("../assets/images/dashboard-header2.jpg");
+    background-position: center 45%;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .dashboard-hero-copy {
+    order: 2;
+    position: relative;
+    z-index: 1;
+  }
+
+  .dashboard-pets-grid,
+  .dashboard-reports-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-page {
+    width: min(100% - 32px, 1200px);
+    padding-top: 24px;
+  }
+
+  .dashboard-hero-copy {
+    padding: 28px 24px;
+  }
+
+  .dashboard-pets-grid,
+  .dashboard-reports-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-rescue-banner {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 28px 24px;
+  }
+}
