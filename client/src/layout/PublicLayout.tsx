@@ -5,11 +5,15 @@ import PublicHeader from "./PublicHeader";
 
 export default function PublicLayout() {
   return (
-    <>
+    <div className="public-layout">
       <ScrollToHash />
       <PublicHeader />
-      <Outlet />
+
+      <div className="public-layout-content">
+        <Outlet />
+      </div>
+
       <PublicFooter />
-    </>
+    </div>
   );
 }

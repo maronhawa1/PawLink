@@ -1,4 +1,6 @@
 import "../styles/add-report-form.css";
+import { useAppSelector } from "../store/hooks";
+import type { RootState } from "../store";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -76,6 +78,9 @@ function LocationController({
 
 export default function NewReportPage() {
   const navigate = useNavigate();
+  const isLoggedIn = useAppSelector(
+    (state: RootState) => Boolean(state.auth.token)
+  );
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState("");
@@ -107,6 +112,15 @@ export default function NewReportPage() {
     setPhotoPreview(url);
     return () => URL.revokeObjectURL(url);
   }, [photo]);
+
+  useEffect(() => {
+  if (!isLoggedIn) {
+      navigate("/login", {
+        replace: true,
+        state: { from: "/reports/new" },
+      });
+    }
+  }, [isLoggedIn, navigate]);
 
   function clearPhoto() {
     setPhoto(null);
@@ -153,6 +167,12 @@ export default function NewReportPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!isLoggedIn) {
+      navigate("/login", {
+        state: { from: "/reports/new" },
+      });
+      return;
+    }
     if (isSubmitting) return;
     setFormError("");
 
