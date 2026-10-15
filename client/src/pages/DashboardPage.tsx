@@ -54,7 +54,7 @@ export default function DashboardPage() {
                   new Date(b.createdAt).getTime() -
                   new Date(a.createdAt).getTime()
               )
-              .slice(0, 3)
+              .slice(0, 4)
           );
         }
       } catch {
@@ -75,7 +75,7 @@ export default function DashboardPage() {
     };
   }, []);
 
-  const recentPets = pets.slice(0, 3);
+  const recentPets = pets.slice(0, 4);
   const firstWord = user?.name?.trim().split(/\s+/)[0];
   const firstName = firstWord
     ? firstWord.charAt(0).toUpperCase() + firstWord.slice(1)
