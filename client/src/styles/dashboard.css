@@ -5,8 +5,6 @@
   color: #0e2a5a;
 }
 
-/* Welcome section */
-
 .dashboard-hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -106,8 +104,6 @@
   color: #238f73;
 }
 
-/* Shared section styling */
-
 .dashboard-section {
   margin-top: 48px;
 }
@@ -142,8 +138,6 @@
   text-decoration: underline;
 }
 
-/* Pet cards */
-
 .dashboard-pets-grid,
 .dashboard-reports-grid {
   display: grid;
@@ -175,7 +169,7 @@
   position: relative;
   overflow: hidden;
   display: grid;
-  height: 190px;
+  aspect-ratio: 4 / 3;
   place-items: center;
   background: #e9f5f1;
 }
@@ -188,6 +182,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 35%;
 }
 
 .dashboard-pet-photo span,
@@ -220,8 +215,6 @@
   font-weight: 700;
 }
 
-/* Report cards */
-
 .dashboard-report-type {
   display: inline-block;
   margin-bottom: 12px;
@@ -241,8 +234,6 @@
   font-weight: 700;
   text-transform: capitalize;
 }
-
-/* Loading, errors and empty states */
 
 .dashboard-message,
 .dashboard-empty {
@@ -281,8 +272,6 @@
   text-decoration: none;
 }
 
-/* Rescue map banner */
-
 .dashboard-rescue-banner {
   display: flex;
   align-items: center;
@@ -306,13 +295,7 @@
   line-height: 1.6;
 }
 
-/* Responsive layout */
-
 @media (max-width: 900px) {
-  .dashboard-hero {
-    grid-template-columns: 1fr;
-  }
-
   .dashboard-hero {
     grid-template-columns: 1fr;
   }
