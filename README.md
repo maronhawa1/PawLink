@@ -264,7 +264,7 @@ PawLink/
 
 ## Prerequisites
 
-- **Node.js 22 LTS** (or at least 20.19, which Vite 8 needs) and npm
+- **Node.js 22.18 or newer** (Prisma 8 needs it) and npm
 - **PostgreSQL** database. The team uses Supabase, but any PostgreSQL works for local development.
 - **Supabase project** with Storage (optional, only needed for image uploads)
 - Git
